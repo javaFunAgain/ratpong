@@ -10,12 +10,13 @@ import pl.setblack.pongi.games.api.GameState;
 /**
  * Created by jarek on 2/1/17.
  */
-public class GamesRepositoryInMemory {
+public class GamesRepositoryInMemory implements GamesRepository {
     private HashMap<String, GameInfo> allGamesInfo = HashMap.empty();
 
     private HashMap<String, GameState> allGamesState = HashMap.empty();
 
 
+    @Override
     public Try<GameInfo> createGame(final String uuid, final String name, final String userId) {
         if (allGamesInfo.containsKey(uuid)) {
             return Try.failure(new IllegalArgumentException("game exists"));
@@ -25,17 +26,17 @@ public class GamesRepositoryInMemory {
             return Try.success(newGame);
         }
     }
-
+    @Override
     public Seq<GameInfo> listGames() {
         return allGamesInfo.values();
     }
-
-    private Option<GameState> startNewGame(final GameInfo info, long time) {
+    @Override
+    public Option<GameState> startNewGame(final GameInfo info, long time) {
         final Option<GameState> state = GameState.startFrom(info, time);
         state.forEach( s -> this.allGamesState = this.allGamesState.put(info.uuid, s));
         return state;
     }
-
+    @Override
     public Try<GameState> joinGame(final String uuid, final String userId, final long time) {
         return this.allGamesInfo.get(uuid)
                 .flatMap(g -> g.withPlayer(userId))
@@ -45,11 +46,11 @@ public class GamesRepositoryInMemory {
                 })
                 .toTry(() -> new IllegalStateException("unable to join game"));
     }
-
+    @Override
     public Option<GameState> getGame(final String uuid) {
         return this.allGamesState.get(uuid);
     }
-
+    @Override
     public boolean movePaddle(final String uuid, final String userId ,final float targetY) {
         return this.getGame(uuid).map( g->g.playerMovingTo(userId, targetY)).
                 map( g -> {

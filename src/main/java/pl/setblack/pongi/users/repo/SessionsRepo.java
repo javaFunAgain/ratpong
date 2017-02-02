@@ -32,7 +32,7 @@ public class SessionsRepo {
         return sess;
     }
 
-    public Option<Session> getSesstion (final String uuid) {
+    public Option<Session> getSession(final String uuid) {
         return this.activeSesssions.get().get(uuid);
     }
 

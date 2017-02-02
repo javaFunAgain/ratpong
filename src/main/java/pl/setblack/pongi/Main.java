@@ -1,5 +1,8 @@
 package pl.setblack.pongi;
 
+import pl.setblack.pongi.games.GamesService;
+import pl.setblack.pongi.games.repo.GamesRepository;
+import pl.setblack.pongi.games.repo.GamesRepositoryInMemory;
 import pl.setblack.pongi.users.UsersService;
 import pl.setblack.pongi.users.repo.SessionsRepo;
 import pl.setblack.pongi.users.repo.UsersRepository;
@@ -18,7 +21,9 @@ public class Main {
         final SessionsRepo  sessionRepo = new SessionsRepo(Clock.systemUTC());
         final UsersRepository usersRepo = new UsersRepositoryInMemory();
         final UsersService usersService = new UsersService(usersRepo, sessionRepo);
-        Server server = new Server(usersService);
+        final GamesRepository gamesRepo = new GamesRepositoryInMemory();
+        final GamesService gamesService = new GamesService(gamesRepo, sessionRepo);
+        Server server = new Server(usersService, gamesService);
 
     }
 
