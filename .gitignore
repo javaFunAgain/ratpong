@@ -1,0 +1,13 @@
+*.class
+*.log
+
+.cache
+.history
+.lib/
+dist/*
+target/
+*.iml
+.idea/
+.tmp/
+.logs
+build/
