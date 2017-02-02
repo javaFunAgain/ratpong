@@ -1,0 +1,26 @@
+group 'pl.setblack'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'io.ratpack', name: 'ratpack-core', version: '1.4.4'
+    compile group: 'pl.setblack', name: 'badass', version: '1.0'
+    compile 'com.google.code.findbugs:jsr305:3.0.1'
+    compile 'pl.setblack:airomem-core:1.1.0'
+    compile 'io.javaslang:javaslang:2.1.0-alpha'
+    compile 'io.javaslang:javaslang-jackson:2.1.0-alpha'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.6'
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.8.6'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
