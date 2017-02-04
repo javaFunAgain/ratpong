@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Immutable
 @JsonDeserialize
 public class Player implements Serializable{
+    private static final long serialVersionUID = 1L;
     public final int score;
     public final String name;
     public final Paddle paddle;

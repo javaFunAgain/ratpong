@@ -6,6 +6,7 @@ import javaslang.Tuple;
 import javaslang.Tuple2;
 
 import javax.annotation.concurrent.Immutable;
+import java.util.Random;
 
 /**
  * Created by jarek on 1/23/17.
@@ -13,6 +14,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @JsonDeserialize
 public class Ball extends GameObject {
+    private static final long serialVersionUID = 1L;
     public final Vector2D speed;
 
     @JsonCreator
@@ -29,10 +31,10 @@ public class Ball extends GameObject {
         return new Ball(this.x,this.y, newSpeed);
     }
 
-    public static Ball random() {
-        final double randomAngleA = Math.random()*Math.PI/2.0;
+    public static Ball random(final Random rnd) {
+        final double randomAngleA = rnd.nextDouble()*Math.PI/2.0;
         final double randomAngleB = randomAngleA + Math.PI/4.0;
-        final double randomAngle = (Math.random() <0.5 )? randomAngleB : (randomAngleB + Math.PI);
+        final double randomAngle = (rnd.nextDouble() <0.5 )? randomAngleB : (randomAngleB + Math.PI);
         final Vector2D speed = Vector2D.fromAngle(randomAngle, 0.001);
 
         return new Ball(0.5f, 0.5f,speed);
@@ -42,31 +44,31 @@ public class Ball extends GameObject {
         return new Ball( this.x + speed.x*scale, this.y + speed.y*scale, this.speed);
     }
 
-    public Tuple2<Ball, Tuple2<Player,Player>> bouncePlayer1(Tuple2<Player, Player> players) {
+    public Tuple2<Ball, Tuple2<Player,Player>> bouncePlayer1(Tuple2<Player, Player> players, final Random rnd) {
         if ( this.x < 0 && speed.x < 0) {
             if (isClose(players._1.paddle, this.y)){
                 return Tuple.of(new Ball(0f, this.y, this.speed.bounceX()), players);
             } else {
-                return Tuple.of(Ball.random(), players.map(pl1->pl1, pl2->pl2.score()));
+                return Tuple.of(Ball.random(rnd), players.map(pl1->pl1, pl2->pl2.score()));
             }
         }
         return Tuple.of(this, players);
     }
 
-    public Tuple2<Ball, Tuple2<Player,Player>> bouncePlayer2(Tuple2<Player, Player> players) {
+    public Tuple2<Ball, Tuple2<Player,Player>> bouncePlayer2(Tuple2<Player, Player> players, final Random rnd) {
         if ( this.x > 1.0f && speed.x > 0) {
             if (isClose(players._2.paddle, this.y)){
                 return Tuple.of( new Ball(1f, this.y, this.speed.bounceX()),players);
             } else {
-                return Tuple.of(Ball.random(), players.map(pl1->pl1.score(), pl2->pl2));
+                return Tuple.of(Ball.random(rnd), players.map(pl1->pl1.score(), pl2->pl2));
             }
         }
         return Tuple.of(this, players);
     }
 
-    public Tuple2<Ball, Tuple2<Player,Player>> bounceX(Tuple2<Player, Player> players) {
-        final Tuple2<Ball, Tuple2<Player,Player>> afterPlayer1 = bouncePlayer1(players);
-        return afterPlayer1._1.bouncePlayer2(afterPlayer1._2);
+    public Tuple2<Ball, Tuple2<Player,Player>> bounceX(Tuple2<Player, Player> players, final Random rnd) {
+        final Tuple2<Ball, Tuple2<Player,Player>> afterPlayer1 = bouncePlayer1(players, rnd);
+        return afterPlayer1._1.bouncePlayer2(afterPlayer1._2,rnd);
     }
 
     private boolean isClose(Paddle paddle, float y) {
@@ -84,8 +86,8 @@ public class Ball extends GameObject {
     }
 
 
-    public Tuple2<Ball,Tuple2<Player, Player>> bounce(Tuple2<Player,Player> players) {
-        return this.bounceY().bounceX(players);
+    public Tuple2<Ball,Tuple2<Player, Player>> bounce(Tuple2<Player,Player> players, final Random rnd) {
+        return this.bounceY().bounceX(players, rnd);
     }
 }
 

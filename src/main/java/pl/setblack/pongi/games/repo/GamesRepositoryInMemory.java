@@ -6,14 +6,19 @@ import javaslang.control.Option;
 import pl.setblack.pongi.games.api.GameInfo;
 import pl.setblack.pongi.games.api.GameState;
 
+import java.io.Serializable;
+import java.util.Random;
+
 /**
  * Created by jarek on 2/1/17.
  */
-public class GamesRepositoryInMemory implements GamesRepository {
+public class GamesRepositoryInMemory implements GamesRepository, Serializable {
+    private static final long serialVersionUID = 1L;
     private volatile HashMap<String, GameInfo> allGamesInfo = HashMap.empty();
 
     private volatile HashMap<String, GameState> allGamesState = HashMap.empty();
 
+    private final Random random = new Random(137);
 
     @Override
     public Option<GameInfo> createGame(final String uuid, final String name, final String userId) {
@@ -35,7 +40,7 @@ public class GamesRepositoryInMemory implements GamesRepository {
         final Option<GameState> currentState =
                 this.allGamesState.get(info.uuid);
         return currentState.orElse(() -> {
-            Option<GameState> newState = GameState.startFrom(info, time);
+            Option<GameState> newState = GameState.startFrom(info, time, this.random);
             newState.forEach( s -> this.allGamesState = this.allGamesState.put(info.uuid, s));
             return newState;
         });
@@ -70,7 +75,7 @@ public class GamesRepositoryInMemory implements GamesRepository {
     public Option<GameState> push(String gameUUID, long time) {
         final Option<GameState> gameOpt = this.allGamesState.get( gameUUID);
         return gameOpt.map( game -> {
-            final GameState newState= game.push(time);
+            final GameState newState= game.push(time, this.random);
             this.allGamesState = this.allGamesState.put(gameUUID, newState);
             return newState;
         });

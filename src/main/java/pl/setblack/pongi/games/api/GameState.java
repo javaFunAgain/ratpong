@@ -8,12 +8,13 @@ import javaslang.control.Option;
 
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
+import java.util.Random;
 import java.util.function.Function;
 
 @Immutable
 @JsonDeserialize
 public class GameState implements Serializable {
-
+    private static final long serialVersionUID = 1L;
     public final GamePhase phase;
     public final Ball ball;
     public final Tuple2<Player, Player> players;
@@ -28,13 +29,16 @@ public class GameState implements Serializable {
         this.phase = GamePhase.STARTED;
     }
 
-    public static Option<GameState> startFrom(GameInfo info, long startTime) {
+    public static Option<GameState> startFrom(
+            GameInfo info,
+            long startTime,
+            final Random rnd) {
 
         if (info.players.size() == 2) {
             final Ball ball = new Ball(0.5f, 0.5f);
             final Player player1 = new Player(0, info.players.get(0), createPaddle(1));
             final Player player2 = new Player(0, info.players.get(1), createPaddle(2));
-            return Option.some(new GameState(ball, Tuple.of(player1, player2), startTime).start(startTime));
+            return Option.some(new GameState(ball, Tuple.of(player1, player2), startTime).start(startTime, rnd));
         } else {
             return Option.none();
         }
@@ -45,22 +49,22 @@ public class GameState implements Serializable {
         return  new Paddle(x, 0.5f);
     }
 
-    public GameState start(long startTime) {
+    public GameState start(long startTime, final Random rnd) {
 
         return new GameState(
-                Ball.random(),
+                Ball.random(rnd),
                 this.players,
                 startTime);
 
     }
 
-    public GameState push(long newTime) {
+    public GameState push(long newTime, final Random rnd) {
         if ( this.phase == GamePhase.STARTED) {
             long diff = newTime - this.updateTime;
             float scale = diff / 5.0f;
             final Tuple2<Ball, Tuple2<Player,Player>> newPositions = this.ball
                     .move(scale)
-                    .bounce(this.players);
+                    .bounce(this.players,rnd );
             final Function<Player, Player> movePaddle = player -> player.movePaddle(diff);
             final Tuple2<Player, Player> newPlayers = newPositions._2.map(movePaddle, movePaddle);
 

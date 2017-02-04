@@ -39,13 +39,7 @@ public class GamesRepositoryNonBlocking {
         return callLongOneOperation(() -> gamesRepo.joinGame(uuid, userId, time));
     }
 
-    private <T> CompletionStage<T> callLongOneOperation(final Supplier<T> producer) {
-        final CompletableFuture<T> promise = new CompletableFuture<>();
-        writesExecutor.execute(() -> {
-            promise.complete(producer.get());
-        });
-        return promise;
-    }
+
 
     public CompletionStage<Option<GameState>> push(final String gameUUID,
                                                    final long time) {
@@ -54,5 +48,13 @@ public class GamesRepositoryNonBlocking {
 
     public CompletionStage<Boolean> movePaddle(String gameId, String userId, float targetY) {
         return callLongOneOperation( ()->gamesRepo.movePaddle(gameId, userId, targetY));
+    }
+
+    private <T> CompletionStage<T> callLongOneOperation(final Supplier<T> producer) {
+        final CompletableFuture<T> promise = new CompletableFuture<>();
+        writesExecutor.execute(() -> {
+            promise.complete(producer.get());
+        });
+        return promise;
     }
 }

@@ -8,6 +8,7 @@ import java.io.Serializable;
  */
 @Immutable
 public class UserData implements Serializable{
+    private static final long serialVersionUID = 1L;
     public final String id;
     public final String hashedPassword;
 

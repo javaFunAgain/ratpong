@@ -8,6 +8,7 @@ import pl.setblack.pongi.users.api.Session;
 import java.io.Serializable;
 
 public class UsersRepositoryInMemory implements UsersRepository, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private volatile HashMap<String, UserData> allUsers = HashMap.empty();
 

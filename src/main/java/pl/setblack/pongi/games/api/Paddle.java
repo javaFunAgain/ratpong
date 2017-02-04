@@ -11,6 +11,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @JsonDeserialize
 public class Paddle extends GameObject {
+    private static final long serialVersionUID = 1L;
     public final float targetY;
     @JsonCreator
     public Paddle(float x, float y, float targetY) {

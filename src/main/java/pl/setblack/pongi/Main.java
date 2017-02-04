@@ -1,6 +1,7 @@
 package pl.setblack.pongi;
 
 import pl.setblack.pongi.games.GamesService;
+import pl.setblack.pongi.games.repo.GamesRepoES;
 import pl.setblack.pongi.games.repo.GamesRepository;
 import pl.setblack.pongi.games.repo.GamesRepositoryInMemory;
 import pl.setblack.pongi.users.UsersService;
@@ -22,7 +23,7 @@ public class Main {
         final SessionsRepo  sessionRepo = new SessionsRepo(clock);
         final UsersRepoES persistentUsersRepo = new UsersRepoES();
         final UsersService usersService = new UsersService(persistentUsersRepo, sessionRepo);
-        final GamesRepository gamesRepo = new GamesRepositoryInMemory();
+        final GamesRepository gamesRepo = new GamesRepoES();
         final GamesService gamesService = new GamesService(gamesRepo, sessionRepo, clock);
         Server server = new Server(usersService, gamesService);
 

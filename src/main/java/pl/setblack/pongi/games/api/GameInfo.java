@@ -6,11 +6,13 @@ import javaslang.collection.List;
 import javaslang.control.Option;
 
 import javax.annotation.concurrent.Immutable;
+import java.io.Serializable;
 
 
 @Immutable
 @JsonDeserialize
-public class GameInfo {
+public class GameInfo implements Serializable{
+    private static final long serialVersionUID = 1L;
     public final String name;
 
     public final String uuid;

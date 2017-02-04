@@ -12,6 +12,7 @@ import java.io.Serializable;
 @Immutable
 @JsonDeserialize
 public class GameObject implements Serializable{
+    private static final long serialVersionUID = 1L;
     public final float x;
     public final float y;
 
