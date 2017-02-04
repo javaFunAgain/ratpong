@@ -1,7 +1,6 @@
 package pl.setblack.pongi.games;
 
 import javaslang.collection.List;
-import javaslang.control.Either;
 import javaslang.control.Option;
 import javaslang.control.Try;
 import pl.setblack.pongi.games.repo.GamesRepository;
@@ -39,46 +38,44 @@ public class GamesService {
 
     public Action<Chain> define() {
         return chain -> chain
-                .prefix("games", listGames());
+                .prefix("games", listGames())
+                .prefix("create", createGame());
     }
 
     private Action<? super Chain> createGame() {
-        return chain -> chain.post("create", ctx -> {
-            ctx.parse(String.class).then(gameName -> {
+        return chain -> chain.post( ctx -> {
+            ctx.getRequest().getBody().then(gameName -> {
                 final UUID uuid = UUID.randomUUID();
                 renderAsync(
                         ctx,
-                        sess -> gamesRepo.createGame(uuid.toString(),gameName, sess.userId),
-                        ()-> Try.failure(new IllegalArgumentException("no user session")));
+                        sess -> gamesRepo
+                                .createGame(uuid.toString(), gameName.getText(), sess.userId));
             });
-
         });
     }
 
     private Action<? super Chain> listGames() {
         return chain -> chain.get(
-                ctx -> renderAsync(ctx, (any) -> gamesRepo.listGames(),
-                ()-> List.empty()));
+                ctx -> renderAsync(ctx, (any) -> gamesRepo.listGames()));
     }
 
     private <T> void renderAsync(Context ctx,
-                                 Function<Session, CompletionStage<T>> async,
-                                 Supplier<T> alternative) {
+                                 Function<Session, CompletionStage<T>> async
+    ) {
         String bearer = ctx.getRequest().getHeaders().get("Authorization");
-        final String sessionId = bearer.replace("bearer ","");
+        final String sessionId = bearer.replace("Bearer ", "");
         final Option<Session> session = sessionsRepo.getSession(sessionId);
 
         final Promise<JsonRender> result = Promise.async(d ->
-            d.accept(session.map(
-                    sess -> {
-                        final CompletionStage<JsonRender> future = async.apply(sess).thenApply(Jackson::json);
-                        return future;
-                    })
-                    .getOrElse(
-                            CompletableFuture.completedFuture(alternative.get())
-                                    .thenApply(Jackson::json)))
+                d.accept(session.map(
+                        sess -> {
+                            final CompletionStage<JsonRender> future = async.apply(sess).thenApply(Jackson::json);
+                            return future;
+                        })
+                        .getOrElse(
+                                CompletableFuture.completedFuture("unauthorized")
+                                        .thenApply(Jackson::json)))
         );
         ctx.render(result);
-
     }
 }

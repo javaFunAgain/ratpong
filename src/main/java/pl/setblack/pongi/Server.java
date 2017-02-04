@@ -2,6 +2,7 @@ package pl.setblack.pongi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import javaslang.jackson.datatype.JavaslangModule;
 import pl.setblack.badass.Politician;
@@ -38,6 +39,7 @@ public class Server {
                         new ObjectMapper()
                                 .registerModule(new ParameterNamesModule())
                                 .registerModule(new Jdk8Module())
+                                .registerModule(new JavaTimeModule())
                                 .registerModule(new JavaslangModule())))
                 .handlers(chain ->
                         chain.prefix("api",

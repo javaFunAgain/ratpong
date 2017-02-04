@@ -1,6 +1,8 @@
 package pl.setblack.pongi.games.repo;
 
 import javaslang.collection.Seq;
+import javaslang.control.Either;
+import javaslang.control.Option;
 import javaslang.control.Try;
 import pl.setblack.pongi.games.api.GameInfo;
 
@@ -28,7 +30,7 @@ public class GamesRepositoryNonBlocking {
     }
 
 
-    public CompletionStage<Try<GameInfo>> createGame(String uuid, String name, String userId) {
+    public CompletionStage<Option<GameInfo>> createGame(String uuid, String name, String userId) {
         return callLongOneOperation(() -> gamesRepo.createGame(uuid, name, userId));
 
     }

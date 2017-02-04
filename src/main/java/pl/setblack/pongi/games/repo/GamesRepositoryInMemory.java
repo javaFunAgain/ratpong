@@ -17,13 +17,13 @@ public class GamesRepositoryInMemory implements GamesRepository {
 
 
     @Override
-    public Try<GameInfo> createGame(final String uuid, final String name, final String userId) {
+    public Option<GameInfo> createGame(final String uuid, final String name, final String userId) {
         if (allGamesInfo.containsKey(uuid)) {
-            return Try.failure(new IllegalArgumentException("game exists"));
+            return Option.none();
         } else {
             final GameInfo newGame = new GameInfo(name, uuid, userId);
             allGamesInfo = allGamesInfo.put(uuid, newGame);
-            return Try.success(newGame);
+            return Option.some(newGame);
         }
     }
     @Override

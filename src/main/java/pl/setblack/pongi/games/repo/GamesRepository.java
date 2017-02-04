@@ -10,7 +10,7 @@ import pl.setblack.pongi.games.api.GameState;
  * Created by jarek on 2/2/17.
  */
 public interface GamesRepository {
-    Try<GameInfo> createGame(String uuid, String name, String userId);
+    Option<GameInfo> createGame(String uuid, String name, String userId);
 
     Seq<GameInfo> listGames();
 
