@@ -29,22 +29,25 @@ public class GamesRepositoryInMemory implements GamesRepository {
     public Seq<GameInfo> listGames() {
         return allGamesInfo.values();
     }
+
     @Override
     public Option<GameState> startNewGame(final GameInfo info, long time) {
-        final Option<GameState> state = GameState.startFrom(info, time);
+        final Option<GameState> currentState =
+                this.allGamesState.get(info.uuid);
+        return currentState.orElse(() -> {
+            Option<GameState> newState = GameState.startFrom(info, time);
+            newState.forEach( s -> this.allGamesState = this.allGamesState.put(info.uuid, s));
+            return newState;
+        });
 
-        state.forEach( s -> this.allGamesState = this.allGamesState.put(info.uuid, s));
-        return state;
     }
     @Override
     public Option<GameState> joinGame(final String uuid, final String userId, final long time) {
         return this.allGamesInfo.get(uuid)
-                .flatMap(g -> {
-
-                    return g.withPlayer(userId);
-                })
+                .flatMap(g -> g.withPlayer(userId))
                 .flatMap(g -> {
                     this.allGamesInfo = this.allGamesInfo.put(uuid, g);
+
                     return startNewGame(g, time);
                 });
     }

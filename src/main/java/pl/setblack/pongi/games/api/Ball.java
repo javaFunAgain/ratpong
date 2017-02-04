@@ -2,6 +2,7 @@ package pl.setblack.pongi.games.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import javaslang.Tuple;
 import javaslang.Tuple2;
 
 import javax.annotation.concurrent.Immutable;
@@ -41,24 +42,31 @@ public class Ball extends GameObject {
         return new Ball( this.x + speed.x*scale, this.y + speed.y*scale, this.speed);
     }
 
-    public Ball bounceX(Tuple2<Paddle, Paddle> paddles) {
+    public Tuple2<Ball, Tuple2<Player,Player>> bouncePlayer1(Tuple2<Player, Player> players) {
         if ( this.x < 0 && speed.x < 0) {
-            if (isClose(paddles._1, this.y)){
-                return new Ball(0f, this.y, this.speed.bounceX());
+            if (isClose(players._1.paddle, this.y)){
+                return Tuple.of(new Ball(0f, this.y, this.speed.bounceX()), players);
             } else {
-                return Ball.random();
+                return Tuple.of(Ball.random(), players.map(pl1->pl1, pl2->pl2.score()));
             }
-
         }
+        return Tuple.of(this, players);
+    }
+
+    public Tuple2<Ball, Tuple2<Player,Player>> bouncePlayer2(Tuple2<Player, Player> players) {
         if ( this.x > 1.0f && speed.x > 0) {
-            if (isClose(paddles._2, this.y)){
-                return new Ball(1f, this.y, this.speed.bounceX());
+            if (isClose(players._2.paddle, this.y)){
+                return Tuple.of( new Ball(1f, this.y, this.speed.bounceX()),players);
             } else {
-                return Ball.random();
+                return Tuple.of(Ball.random(), players.map(pl1->pl1.score(), pl2->pl2));
             }
-
         }
-        return this;
+        return Tuple.of(this, players);
+    }
+
+    public Tuple2<Ball, Tuple2<Player,Player>> bounceX(Tuple2<Player, Player> players) {
+        final Tuple2<Ball, Tuple2<Player,Player>> afterPlayer1 = bouncePlayer1(players);
+        return afterPlayer1._1.bouncePlayer2(afterPlayer1._2);
     }
 
     private boolean isClose(Paddle paddle, float y) {
@@ -76,8 +84,8 @@ public class Ball extends GameObject {
     }
 
 
-    public Ball bounce(Tuple2<Paddle,Paddle> paddles) {
-        return this.bounceY().bounceX(paddles);
+    public Tuple2<Ball,Tuple2<Player, Player>> bounce(Tuple2<Player,Player> players) {
+        return this.bounceY().bounceX(players);
     }
 }
 

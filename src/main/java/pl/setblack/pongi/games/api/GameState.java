@@ -14,6 +14,7 @@ import java.util.function.Function;
 @JsonDeserialize
 public class GameState implements Serializable {
 
+    public final GamePhase phase;
     public final Ball ball;
     public final Tuple2<Player, Player> players;
     public final long updateTime;
@@ -24,6 +25,7 @@ public class GameState implements Serializable {
         this.ball = ball;
         this.players = players;
         this.updateTime = updateTime;
+        this.phase = GamePhase.STARTED;
     }
 
     public static Option<GameState> startFrom(GameInfo info, long startTime) {
@@ -53,14 +55,20 @@ public class GameState implements Serializable {
     }
 
     public GameState push(long newTime) {
-        long diff = newTime - this.updateTime;
-        float scale = diff / 5.0f;
-        final Ball newBallPos = this.ball.bounce(this.players.map(pl -> pl.paddle, pl -> pl.paddle)).move(scale);
-        final Function<Player, Player> movePaddle = player -> player.movePaddle(diff);
+        if ( this.phase == GamePhase.STARTED) {
+            long diff = newTime - this.updateTime;
+            float scale = diff / 5.0f;
+            final Tuple2<Ball, Tuple2<Player,Player>> newPositions = this.ball
+                    .move(scale)
+                    .bounce(this.players);
+            final Function<Player, Player> movePaddle = player -> player.movePaddle(diff);
+            final Tuple2<Player, Player> newPlayers = newPositions._2.map(movePaddle, movePaddle);
 
-        final Tuple2<Player, Player> newPlayers = this.players.map(movePaddle, movePaddle);
+            return new GameState(newPositions._1, newPlayers, newTime);
+        } else {
+            return this;
+        }
 
-        return new GameState(newBallPos, newPlayers, newTime);
     }
 
 

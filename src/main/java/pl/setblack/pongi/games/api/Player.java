@@ -28,6 +28,9 @@ public class Player implements Serializable{
         return (this.name.equals(userId))
                 ? new Player(this.score, this.name, this.paddle.movingTo(targetY))
                 : this;
+    }
 
+    public Player score() {
+        return new Player(this.score+1, name, paddle);
     }
 }
