@@ -20,4 +20,7 @@ public interface GamesRepository {
     Option<GameState> getGame(String uuid);
 
     boolean movePaddle(String uuid, String userId, float targetY);
+
+    Option<GameState> push(String gameUUID, long time);
+
 }

@@ -32,15 +32,20 @@ public class GamesRepositoryInMemory implements GamesRepository {
     @Override
     public Option<GameState> startNewGame(final GameInfo info, long time) {
         final Option<GameState> state = GameState.startFrom(info, time);
+        System.out.println("starting game Info:"+ info.toString());
+        System.out.println("starting game State:"+ state.toString());
         state.forEach( s -> this.allGamesState = this.allGamesState.put(info.uuid, s));
         return state;
     }
     @Override
     public Option<GameState> joinGame(final String uuid, final String userId, final long time) {
         return this.allGamesInfo.get(uuid)
-                .flatMap(g -> g.withPlayer(userId))
                 .flatMap(g -> {
-                    this.allGamesInfo.put(uuid, g);
+                    System.out.println("player "+userId+"about to join game:" + g.toString()  );
+                    return g.withPlayer(userId);
+                })
+                .flatMap(g -> {
+                    this.allGamesInfo = this.allGamesInfo.put(uuid, g);
                     return startNewGame(g, time);
                 });
     }
@@ -56,5 +61,15 @@ public class GamesRepositoryInMemory implements GamesRepository {
                     return true;
                 }).getOrElse(false);
 
+    }
+
+    @Override
+    public Option<GameState> push(String gameUUID, long time) {
+        final Option<GameState> gameOpt = this.allGamesState.get( gameUUID);
+        return gameOpt.map( game -> {
+            final GameState newState= game.push(time);
+            this.allGamesState = this.allGamesState.put(gameUUID, newState);
+            return newState;
+        });
     }
 }

@@ -1,6 +1,9 @@
 package pl.setblack.pongi.games;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.reactivex.Flowable;
 import javaslang.control.Option;
+import pl.setblack.pongi.games.api.GameState;
 import pl.setblack.pongi.games.repo.GamesRepository;
 import pl.setblack.pongi.games.repo.GamesRepositoryNonBlocking;
 import pl.setblack.pongi.users.api.Session;
@@ -11,11 +14,14 @@ import ratpack.handling.Chain;
 import ratpack.handling.Context;
 import ratpack.jackson.Jackson;
 import ratpack.jackson.JsonRender;
+import ratpack.websocket.WebSockets;
 
 import java.time.Clock;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -29,6 +35,7 @@ public class GamesService {
 
     private final Clock clock;
 
+    private final ConcurrentHashMap<String, Flowable<GameState>> gamesFlow = new ConcurrentHashMap<>();
 
     public GamesService(final GamesRepository gamesRepo, SessionsRepo sessionsRepo, Clock clock) {
         this.gamesRepo = new GamesRepositoryNonBlocking(gamesRepo);
@@ -41,11 +48,38 @@ public class GamesService {
         return chain -> chain
                 .prefix("games", listGames())
                 .prefix("create", createGame())
-                .prefix("join", joinGame());
+                .prefix("join", joinGame())
+                .prefix("stream", streamGame());
+    }
+
+    private Action<? super Chain> streamGame() {
+        return chain -> chain.get(":id", ctx -> {
+                    final String gameId = ctx.getPathTokens().get("id");
+                    final Option<Flowable<GameState>> gsOpt = Option.of(this.gamesFlow.get(gameId));
+                    System.out.println("gonna stream:" + gsOpt);
+                    gsOpt.forEach(gsFlow -> {
+
+                        final Flowable<String> stringFlow = gsFlow
+
+                                .map(val -> {
+                                    final String result =
+                                            chain.getRegistry()
+                                                    .get(ObjectMapper.class)
+                                                    .writeValueAsString(val);
+
+                                    return result;
+                                });
+                        System.out.println("stream:" + stringFlow);
+                        WebSockets.websocketBroadcast(ctx, stringFlow);
+                    });
+
+                }
+        );
+
     }
 
     private Action<? super Chain> createGame() {
-        return chain -> chain.post( ctx -> {
+        return chain -> chain.post(ctx -> {
             ctx.getRequest().getBody().then(gameName -> {
                 final UUID uuid = UUID.randomUUID();
                 renderAsync(
@@ -55,17 +89,39 @@ public class GamesService {
             });
         });
     }
+
     private Action<? super Chain> joinGame() {
-        return chain -> chain.post( ctx -> {
-            ctx.getRequest().getBody().then(gameUUID -> {
+        return chain -> chain.post(ctx -> {
+            ctx.getRequest().getBody().then(body -> {
+                final String gameUUID = body.getText();
+
                 renderAsync(
                         ctx,
-                        sess -> gamesRepo
-                                .joinGame(gameUUID.toString(), sess.userId, this.clock.millis()));
+                        sess -> {
+                            final CompletionStage<Option<GameState>> state = gamesRepo
+                                    .joinGame(gameUUID, sess.userId, this.clock.millis());
+                            state.thenAccept(gameOption -> {
+
+                                gameOption.forEach(game -> {
+                                    final Flowable<GameState> stateFlow = Flowable.interval(1000, 50, TimeUnit.MILLISECONDS)
+                                            .flatMap(whatever -> {
+                                                final CompletionStage<Option<GameState>> future = this.gamesRepo.push(gameUUID, clock.millis());
+                                                return Flowable.fromFuture(future.toCompletableFuture());
+                                            })
+                                            .filter(s -> s.isDefined())
+                                            .map(s -> s.get());
+                                    System.out.println("starting flow for:"+ gameUUID);
+                                    this.gamesFlow.put(gameUUID, stateFlow);
+                                });
+
+                            });
+                            System.out.println("returning join state for "+ gameUUID);
+                            System.out.println("state is "+ state);
+                            return state;
+                        });
             });
         });
     }
-
 
 
     private Action<? super Chain> listGames() {

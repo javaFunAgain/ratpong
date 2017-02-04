@@ -1,9 +1,7 @@
 package pl.setblack.pongi.games.repo;
 
 import javaslang.collection.Seq;
-import javaslang.control.Either;
 import javaslang.control.Option;
-import javaslang.control.Try;
 import pl.setblack.pongi.games.api.GameInfo;
 import pl.setblack.pongi.games.api.GameState;
 
@@ -46,5 +44,10 @@ public class GamesRepositoryNonBlocking {
             promise.complete(producer.get());
         });
         return promise;
+    }
+
+    public CompletionStage<Option<GameState>> push(final String gameUUID,
+                                                   final long time) {
+        return callLongOneOperation( ()->gamesRepo.push(gameUUID, time));
     }
 }

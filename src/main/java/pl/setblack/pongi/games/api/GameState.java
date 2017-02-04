@@ -32,7 +32,7 @@ public class GameState implements Serializable {
             final Ball ball = new Ball(0.5f, 0.5f);
             final Player player1 = new Player(0, info.players.get(0), createPaddle(1));
             final Player player2 = new Player(0, info.players.get(1), createPaddle(2));
-            return Option.some(new GameState(ball, Tuple.of(player1, player2), startTime));
+            return Option.some(new GameState(ball, Tuple.of(player1, player2), startTime).start(startTime));
         } else {
             return Option.none();
         }
@@ -44,6 +44,7 @@ public class GameState implements Serializable {
     }
 
     public GameState start(long startTime) {
+        System.out.println("gams started :" +this.players.toString());
         return new GameState(
                 Ball.random(),
                 this.players,
@@ -58,6 +59,7 @@ public class GameState implements Serializable {
         final Function<Player, Player> movePaddle = player -> player.movePaddle(diff);
 
         final Tuple2<Player, Player> newPlayers = this.players.map(movePaddle, movePaddle);
+
         return new GameState(newBallPos, newPlayers, newTime);
     }
 
@@ -66,5 +68,14 @@ public class GameState implements Serializable {
         final Function<Player, Player> movePaddle = player -> player.makeMoving(userId, targetY);
         final Tuple2<Player, Player> newPlayers = this.players.map(movePaddle, movePaddle);
         return new GameState(this.ball, newPlayers, this.updateTime);
+    }
+
+    @Override
+    public String toString() {
+        return "GameState{" +
+                "ball=" + ball +
+                ", players=" + players +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

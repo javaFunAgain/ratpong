@@ -29,15 +29,22 @@ public class GameInfo {
     }
 
     public Option<GameInfo> withPlayer(String userId) {
-        if ( this.players.size()<2) {
-            if ( this.players.contains(userId)) {
-                return Option.some(this);
-            } else {
-                return  Option.some( new GameInfo(this.name, this.uuid, this.players.append(userId)));
-            }
+        if ( this.players.contains(userId)) {
+            return Option.some(this);
+        } else if ( this.players.size() <=1 ){
+            return  Option.some( new GameInfo(this.name, this.uuid, this.players.append(userId)));
         } else {
-
             return Option.none();
         }
+
+    }
+
+    @Override
+    public String toString() {
+        return "GameInfo{" +
+                "name='" + name + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", players=" + players +
+                '}';
     }
 }
