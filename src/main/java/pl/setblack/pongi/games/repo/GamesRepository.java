@@ -2,7 +2,6 @@ package pl.setblack.pongi.games.repo;
 
 import javaslang.collection.Seq;
 import javaslang.control.Option;
-import javaslang.control.Try;
 import pl.setblack.pongi.games.api.GameInfo;
 import pl.setblack.pongi.games.api.GameState;
 
@@ -16,7 +15,7 @@ public interface GamesRepository {
 
     Option<GameState> startNewGame(GameInfo info, long time);
 
-    Try<GameState> joinGame(String uuid, String userId, long time);
+    Option<GameState> joinGame(String uuid, String userId, long time);
 
     Option<GameState> getGame(String uuid);
 

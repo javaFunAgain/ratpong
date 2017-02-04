@@ -5,6 +5,7 @@ import javaslang.control.Either;
 import javaslang.control.Option;
 import javaslang.control.Try;
 import pl.setblack.pongi.games.api.GameInfo;
+import pl.setblack.pongi.games.api.GameState;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -32,9 +33,12 @@ public class GamesRepositoryNonBlocking {
 
     public CompletionStage<Option<GameInfo>> createGame(String uuid, String name, String userId) {
         return callLongOneOperation(() -> gamesRepo.createGame(uuid, name, userId));
-
     }
 
+
+    public CompletionStage<Option<GameState>> joinGame(final String uuid, final String userId, final long time) {
+        return callLongOneOperation(() -> gamesRepo.joinGame(uuid, userId, time));
+    }
 
     private <T> CompletionStage<T> callLongOneOperation(final Supplier<T> producer) {
         final CompletableFuture<T> promise = new CompletableFuture<>();

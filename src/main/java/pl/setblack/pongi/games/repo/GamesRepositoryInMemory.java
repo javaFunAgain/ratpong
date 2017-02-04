@@ -3,7 +3,6 @@ package pl.setblack.pongi.games.repo;
 import javaslang.collection.HashMap;
 import javaslang.collection.Seq;
 import javaslang.control.Option;
-import javaslang.control.Try;
 import pl.setblack.pongi.games.api.GameInfo;
 import pl.setblack.pongi.games.api.GameState;
 
@@ -37,14 +36,13 @@ public class GamesRepositoryInMemory implements GamesRepository {
         return state;
     }
     @Override
-    public Try<GameState> joinGame(final String uuid, final String userId, final long time) {
+    public Option<GameState> joinGame(final String uuid, final String userId, final long time) {
         return this.allGamesInfo.get(uuid)
                 .flatMap(g -> g.withPlayer(userId))
                 .flatMap(g -> {
                     this.allGamesInfo.put(uuid, g);
                     return startNewGame(g, time);
-                })
-                .toTry(() -> new IllegalStateException("unable to join game"));
+                });
     }
     @Override
     public Option<GameState> getGame(final String uuid) {

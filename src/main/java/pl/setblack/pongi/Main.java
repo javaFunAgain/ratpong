@@ -17,12 +17,12 @@ public class Main {
 
 
     public static void main(final String ... args ) throws  Exception{
-
-        final SessionsRepo  sessionRepo = new SessionsRepo(Clock.systemUTC());
+        final Clock clock = Clock.systemUTC();
+        final SessionsRepo  sessionRepo = new SessionsRepo(clock);
         final UsersRepository usersRepo = new UsersRepositoryInMemory();
         final UsersService usersService = new UsersService(usersRepo, sessionRepo);
         final GamesRepository gamesRepo = new GamesRepositoryInMemory();
-        final GamesService gamesService = new GamesService(gamesRepo, sessionRepo);
+        final GamesService gamesService = new GamesService(gamesRepo, sessionRepo, clock);
         Server server = new Server(usersService, gamesService);
 
     }

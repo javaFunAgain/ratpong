@@ -1,8 +1,6 @@
 package pl.setblack.pongi.games;
 
-import javaslang.collection.List;
 import javaslang.control.Option;
-import javaslang.control.Try;
 import pl.setblack.pongi.games.repo.GamesRepository;
 import pl.setblack.pongi.games.repo.GamesRepositoryNonBlocking;
 import pl.setblack.pongi.users.api.Session;
@@ -14,11 +12,11 @@ import ratpack.handling.Context;
 import ratpack.jackson.Jackson;
 import ratpack.jackson.JsonRender;
 
+import java.time.Clock;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Created by jarek on 2/1/17.
@@ -29,17 +27,21 @@ public class GamesService {
 
     private final SessionsRepo sessionsRepo;
 
+    private final Clock clock;
 
-    public GamesService(final GamesRepository gamesRepo, SessionsRepo sessionsRepo) {
+
+    public GamesService(final GamesRepository gamesRepo, SessionsRepo sessionsRepo, Clock clock) {
         this.gamesRepo = new GamesRepositoryNonBlocking(gamesRepo);
 
         this.sessionsRepo = sessionsRepo;
+        this.clock = clock;
     }
 
     public Action<Chain> define() {
         return chain -> chain
                 .prefix("games", listGames())
-                .prefix("create", createGame());
+                .prefix("create", createGame())
+                .prefix("join", joinGame());
     }
 
     private Action<? super Chain> createGame() {
@@ -53,6 +55,18 @@ public class GamesService {
             });
         });
     }
+    private Action<? super Chain> joinGame() {
+        return chain -> chain.post( ctx -> {
+            ctx.getRequest().getBody().then(gameUUID -> {
+                renderAsync(
+                        ctx,
+                        sess -> gamesRepo
+                                .joinGame(gameUUID.toString(), sess.userId, this.clock.millis()));
+            });
+        });
+    }
+
+
 
     private Action<? super Chain> listGames() {
         return chain -> chain.get(
