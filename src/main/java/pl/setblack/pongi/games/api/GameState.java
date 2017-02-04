@@ -44,7 +44,7 @@ public class GameState implements Serializable {
     }
 
     public GameState start(long startTime) {
-        System.out.println("gams started :" +this.players.toString());
+
         return new GameState(
                 Ball.random(),
                 this.players,

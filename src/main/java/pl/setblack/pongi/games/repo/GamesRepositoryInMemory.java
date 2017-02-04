@@ -32,8 +32,7 @@ public class GamesRepositoryInMemory implements GamesRepository {
     @Override
     public Option<GameState> startNewGame(final GameInfo info, long time) {
         final Option<GameState> state = GameState.startFrom(info, time);
-        System.out.println("starting game Info:"+ info.toString());
-        System.out.println("starting game State:"+ state.toString());
+
         state.forEach( s -> this.allGamesState = this.allGamesState.put(info.uuid, s));
         return state;
     }
@@ -41,7 +40,7 @@ public class GamesRepositoryInMemory implements GamesRepository {
     public Option<GameState> joinGame(final String uuid, final String userId, final long time) {
         return this.allGamesInfo.get(uuid)
                 .flatMap(g -> {
-                    System.out.println("player "+userId+"about to join game:" + g.toString()  );
+
                     return g.withPlayer(userId);
                 })
                 .flatMap(g -> {

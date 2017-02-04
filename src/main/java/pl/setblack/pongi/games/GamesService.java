@@ -120,7 +120,7 @@ public class GamesService {
                                             })
                                             .filter(s -> s.isDefined())
                                             .map(s -> s.get());
-                                    System.out.println("starting flow for:"+ gameUUID);
+
                                     this.gamesFlow.put(gameUUID, stateFlow);
                                 });
                                 return gameOption;
