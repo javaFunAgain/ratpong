@@ -1,5 +1,6 @@
 package pl.setblack.pongi.games.repo;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javaslang.collection.Seq;
 import javaslang.control.Option;
 import pl.setblack.pongi.games.api.GameInfo;
@@ -49,5 +50,9 @@ public class GamesRepositoryNonBlocking {
     public CompletionStage<Option<GameState>> push(final String gameUUID,
                                                    final long time) {
         return callLongOneOperation( ()->gamesRepo.push(gameUUID, time));
+    }
+
+    public CompletionStage<Boolean> movePaddle(String gameId, String userId, float targetY) {
+        return callLongOneOperation( ()->gamesRepo.movePaddle(gameId, userId, targetY));
     }
 }

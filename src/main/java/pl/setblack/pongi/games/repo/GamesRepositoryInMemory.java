@@ -54,10 +54,10 @@ public class GamesRepositoryInMemory implements GamesRepository {
         return this.allGamesState.get(uuid);
     }
     @Override
-    public boolean movePaddle(final String uuid, final String userId ,final float targetY) {
-        return this.getGame(uuid).map( g->g.playerMovingTo(userId, targetY)).
+    public boolean movePaddle(final String gameId, final String userId ,final float targetY) {
+        return this.getGame(gameId).map( g->g.playerMovingTo(userId, targetY)).
                 map( g -> {
-                    this.allGamesState  = this.allGamesState.put(uuid, g);
+                    this.allGamesState  = this.allGamesState.put(gameId, g);
                     return true;
                 }).getOrElse(false);
 

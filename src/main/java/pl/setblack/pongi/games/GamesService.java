@@ -49,7 +49,19 @@ public class GamesService {
                 .prefix("games", listGames())
                 .prefix("create", createGame())
                 .prefix("join", joinGame())
+                .prefix("move", movePaddle())
                 .prefix("stream", streamGame());
+    }
+
+    private Action<? super Chain> movePaddle() {
+        return chain -> chain.post(":id", ctx -> {
+            final String gameId = ctx.getPathTokens().get("id");
+            ctx.getRequest().getBody().then( body ->{
+                final float targetY = Float.parseFloat(body.getText());
+                renderAsync(ctx, session ->   gamesRepo.movePaddle( gameId, session.userId,  targetY));
+            } );
+
+        });
     }
 
     private Action<? super Chain> streamGame() {
@@ -72,7 +84,6 @@ public class GamesService {
                         System.out.println("stream:" + stringFlow);
                         WebSockets.websocketBroadcast(ctx, stringFlow);
                     });
-
                 }
         );
 
@@ -100,8 +111,7 @@ public class GamesService {
                         sess -> {
                             final CompletionStage<Option<GameState>> state = gamesRepo
                                     .joinGame(gameUUID, sess.userId, this.clock.millis());
-                            state.thenAccept(gameOption -> {
-
+                            return state.thenApply(gameOption -> {
                                 gameOption.forEach(game -> {
                                     final Flowable<GameState> stateFlow = Flowable.interval(1000, 50, TimeUnit.MILLISECONDS)
                                             .flatMap(whatever -> {
@@ -113,11 +123,9 @@ public class GamesService {
                                     System.out.println("starting flow for:"+ gameUUID);
                                     this.gamesFlow.put(gameUUID, stateFlow);
                                 });
-
+                                return gameOption;
                             });
-                            System.out.println("returning join state for "+ gameUUID);
-                            System.out.println("state is "+ state);
-                            return state;
+
                         });
             });
         });
