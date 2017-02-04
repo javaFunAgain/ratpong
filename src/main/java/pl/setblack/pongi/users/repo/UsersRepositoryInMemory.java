@@ -5,7 +5,9 @@ import javaslang.control.Option;
 import pl.setblack.pongi.users.api.RegUserStatus;
 import pl.setblack.pongi.users.api.Session;
 
-public class UsersRepositoryInMemory implements UsersRepository {
+import java.io.Serializable;
+
+public class UsersRepositoryInMemory implements UsersRepository, Serializable {
 
     private volatile HashMap<String, UserData> allUsers = HashMap.empty();
 

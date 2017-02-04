@@ -10,9 +10,9 @@ import pl.setblack.pongi.games.api.GameState;
  * Created by jarek on 2/1/17.
  */
 public class GamesRepositoryInMemory implements GamesRepository {
-    private HashMap<String, GameInfo> allGamesInfo = HashMap.empty();
+    private volatile HashMap<String, GameInfo> allGamesInfo = HashMap.empty();
 
-    private HashMap<String, GameState> allGamesState = HashMap.empty();
+    private volatile HashMap<String, GameState> allGamesState = HashMap.empty();
 
 
     @Override
@@ -55,6 +55,7 @@ public class GamesRepositoryInMemory implements GamesRepository {
     public Option<GameState> getGame(final String uuid) {
         return this.allGamesState.get(uuid);
     }
+
     @Override
     public boolean movePaddle(final String gameId, final String userId ,final float targetY) {
         return this.getGame(gameId).map( g->g.playerMovingTo(userId, targetY)).

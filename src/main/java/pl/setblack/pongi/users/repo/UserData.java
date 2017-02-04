@@ -1,12 +1,13 @@
 package pl.setblack.pongi.users.repo;
 
 import javax.annotation.concurrent.Immutable;
+import java.io.Serializable;
 
 /**
  * Created by jarek on 1/14/17.
  */
 @Immutable
-public class UserData {
+public class UserData implements Serializable{
     public final String id;
     public final String hashedPassword;
 
