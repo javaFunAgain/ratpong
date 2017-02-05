@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import javaslang.Tuple;
 import javaslang.Tuple2;
+import javaslang.collection.List;
 import javaslang.control.Option;
 
 import javax.annotation.concurrent.Immutable;
@@ -26,7 +27,15 @@ public class GameState implements Serializable {
         this.ball = ball;
         this.players = players;
         this.updateTime = updateTime;
-        this.phase = GamePhase.STARTED;
+        this.phase = phaseFromScore(players);
+    }
+
+    private GamePhase phaseFromScore(Tuple2<Player,Player> players) {
+        if ( List.of(players._1, players._2).filter(p -> p.score>=15).isEmpty()) {
+            return GamePhase.STARTED;
+        } else {
+            return GamePhase.ENDED;
+        }
     }
 
     public static Option<GameState> startFrom(

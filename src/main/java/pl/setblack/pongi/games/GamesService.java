@@ -56,10 +56,10 @@ public class GamesService {
     private Action<? super Chain> movePaddle() {
         return chain -> chain.post(":id", ctx -> {
             final String gameId = ctx.getPathTokens().get("id");
-            ctx.getRequest().getBody().then( body ->{
+            ctx.getRequest().getBody().then(body -> {
                 final float targetY = Float.parseFloat(body.getText());
-                renderAsync(ctx, session ->   gamesRepo.movePaddle( gameId, session.userId,  targetY));
-            } );
+                renderAsync(ctx, session -> gamesRepo.movePaddle(gameId, session.userId, targetY));
+            });
 
         });
     }
@@ -68,7 +68,7 @@ public class GamesService {
         return chain -> chain.get(":id", ctx -> {
                     final String gameId = ctx.getPathTokens().get("id");
                     final Option<Flowable<GameState>> gsOpt = Option.of(this.gamesFlow.get(gameId));
-                    System.out.println("gonna stream:" + gsOpt);
+
                     gsOpt.forEach(gsFlow -> {
 
                         final Flowable<String> stringFlow = gsFlow
@@ -81,7 +81,7 @@ public class GamesService {
 
                                     return result;
                                 });
-                        System.out.println("stream:" + stringFlow);
+
                         WebSockets.websocketBroadcast(ctx, stringFlow);
                     });
                 }

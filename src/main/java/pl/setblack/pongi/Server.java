@@ -8,7 +8,10 @@ import javaslang.jackson.datatype.JavaslangModule;
 import pl.setblack.badass.Politician;
 import pl.setblack.pongi.games.GamesService;
 import pl.setblack.pongi.users.UsersService;
+import ratpack.func.Action;
+import ratpack.handling.Chain;
 import ratpack.server.RatpackServer;
+import ratpack.server.RatpackServerSpec;
 import ratpack.server.ServerConfig;
 
 import java.net.URI;
@@ -28,7 +31,28 @@ public class Server {
     }
 
     private void init() throws Exception {
-        RatpackServer.start(server -> server
+        createServer(defineApi()).start();
+
+    }
+
+    public static RatpackServer createServer(Action<Chain> handlers)
+            throws Exception {
+        return RatpackServer.of(server -> createEmptyServer(server)
+                .handlers(chain ->
+                        chain.prefix("api", handlers)
+                )
+        );
+    }
+
+    private Action<Chain> defineApi() {
+        return apiChain -> apiChain
+                .prefix("users", usersService.users())
+                .prefix("games", gamesService.define());
+    }
+
+    private static RatpackServerSpec createEmptyServer(RatpackServerSpec initial)
+            throws Exception {
+        return initial
                 .serverConfig(
                         ServerConfig
                                 .embedded()
@@ -40,13 +64,6 @@ public class Server {
                                 .registerModule(new ParameterNamesModule())
                                 .registerModule(new Jdk8Module())
                                 .registerModule(new JavaTimeModule())
-                                .registerModule(new JavaslangModule())))
-                .handlers(chain ->
-                        chain.prefix("api",
-                                apiChain -> apiChain
-                                        .prefix("users", usersService.users())
-                                        .prefix("games", gamesService.define()))
-                ));
-
+                                .registerModule(new JavaslangModule())));
     }
 }
