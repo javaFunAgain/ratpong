@@ -9,9 +9,6 @@ import pl.setblack.pongi.scores.UserScore;
 
 import java.util.Comparator;
 
-/**
- * Created by jarek on 2/5/17.
- */
 public class ScoresRepositoryInMem implements ScoresRepository{
     private volatile PriorityQueue<UserScore> bestScores;
     private volatile HashMap<String, UserScore> userScores;

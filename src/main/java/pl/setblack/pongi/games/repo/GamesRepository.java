@@ -23,4 +23,6 @@ public interface GamesRepository {
 
     Option<GameState> push(String gameUUID, long time);
 
+    void removeGame(String gameUUID);
+
 }

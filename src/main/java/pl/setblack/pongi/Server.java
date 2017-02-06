@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import javaslang.jackson.datatype.JavaslangModule;
 import pl.setblack.badass.Politician;
 import pl.setblack.pongi.games.GamesService;
+import pl.setblack.pongi.scores.ScoresService;
 import pl.setblack.pongi.users.UsersService;
 import ratpack.func.Action;
 import ratpack.handling.Chain;
@@ -23,10 +24,12 @@ public class Server {
 
     private final UsersService usersService;
     private final GamesService gamesService;
+    private final ScoresService scoresService;
 
-    public Server(UsersService usersService, GamesService gamesService) {
+    public Server(UsersService usersService, GamesService gamesService, ScoresService scoresService) {
         this.usersService = usersService;
         this.gamesService = gamesService;
+        this.scoresService = scoresService;
         Politician.beatAroundTheBush(this::init);
     }
 
@@ -51,7 +54,8 @@ public class Server {
     private Action<Chain> defineApi() {
         return apiChain -> apiChain
                 .prefix("users", usersService.users())
-                .prefix("games", gamesService.define());
+                .prefix("games", gamesService.define())
+                .prefix("score", scoresService.scores());
     }
 
     private static RatpackServerSpec createEmptyServer(RatpackServerSpec initial)

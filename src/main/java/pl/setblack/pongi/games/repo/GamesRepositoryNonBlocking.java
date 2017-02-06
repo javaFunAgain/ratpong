@@ -50,6 +50,10 @@ public class GamesRepositoryNonBlocking {
         return callLongOneOperation( ()->gamesRepo.movePaddle(gameId, userId, targetY));
     }
 
+    public void removeGame(final String gameUUID) {
+        writesExecutor.execute(() -> this.gamesRepo.removeGame(gameUUID));
+    }
+
     private <T> CompletionStage<T> callLongOneOperation(final Supplier<T> producer) {
         final CompletableFuture<T> promise = new CompletableFuture<>();
         writesExecutor.execute(() -> {
@@ -57,4 +61,6 @@ public class GamesRepositoryNonBlocking {
         });
         return promise;
     }
+
+
 }

@@ -80,4 +80,10 @@ public class GamesRepositoryInMemory implements GamesRepository, Serializable {
             return newState;
         });
     }
+
+    @Override
+    public void removeGame(String gameUUID) {
+        this.allGamesInfo = this.allGamesInfo.remove(gameUUID);
+        this.allGamesState = this.allGamesState.remove(gameUUID);
+    }
 }

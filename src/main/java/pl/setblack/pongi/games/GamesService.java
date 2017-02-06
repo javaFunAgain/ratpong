@@ -2,10 +2,16 @@ package pl.setblack.pongi.games;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Flowable;
+import javaslang.collection.List;
 import javaslang.control.Option;
+import pl.setblack.pongi.games.api.GamePhase;
 import pl.setblack.pongi.games.api.GameState;
+import pl.setblack.pongi.games.api.Player;
 import pl.setblack.pongi.games.repo.GamesRepository;
 import pl.setblack.pongi.games.repo.GamesRepositoryNonBlocking;
+import pl.setblack.pongi.scores.GameResult;
+import pl.setblack.pongi.scores.ScoreRecord;
+import pl.setblack.pongi.scores.repo.ScoresRepositoryNonBlocking;
 import pl.setblack.pongi.users.api.Session;
 import pl.setblack.pongi.users.repo.SessionsRepo;
 import ratpack.exec.Promise;
@@ -33,14 +39,16 @@ public class GamesService {
 
     private final SessionsRepo sessionsRepo;
 
+    private final ScoresRepositoryNonBlocking scoresRepo;
+
     private final Clock clock;
 
     private final ConcurrentHashMap<String, Flowable<GameState>> gamesFlow = new ConcurrentHashMap<>();
 
-    public GamesService(final GamesRepository gamesRepo, SessionsRepo sessionsRepo, Clock clock) {
+    public GamesService(final GamesRepository gamesRepo, SessionsRepo sessionsRepo, ScoresRepositoryNonBlocking scoresRepo, Clock clock) {
         this.gamesRepo = new GamesRepositoryNonBlocking(gamesRepo);
-
         this.sessionsRepo = sessionsRepo;
+        this.scoresRepo = scoresRepo;
         this.clock = clock;
     }
 
@@ -113,15 +121,9 @@ public class GamesService {
                                     .joinGame(gameUUID, sess.userId, this.clock.millis());
                             return state.thenApply(gameOption -> {
                                 gameOption.forEach(game -> {
-                                    final Flowable<GameState> stateFlow = Flowable.interval(1000, 50, TimeUnit.MILLISECONDS)
-                                            .flatMap(whatever -> {
-                                                final CompletionStage<Option<GameState>> future = this.gamesRepo.push(gameUUID, clock.millis());
-                                                return Flowable.fromFuture(future.toCompletableFuture());
-                                            })
-                                            .filter(s -> s.isDefined())
-                                            .map(s -> s.get());
-
-                                    this.gamesFlow.put(gameUUID, stateFlow);
+                                    if (game.phase == GamePhase.STARTED) {
+                                        this.gamesFlow.computeIfAbsent(gameUUID, this::createFlow);
+                                    }
                                 });
                                 return gameOption;
                             });
@@ -131,6 +133,53 @@ public class GamesService {
         });
     }
 
+    private Flowable<GameState> createFlow(String gameUUID) {
+        final Flowable<GameState> stateFlow = Flowable.interval(1000, 50, TimeUnit.MILLISECONDS)
+                .flatMap(whatever -> {
+                    final CompletionStage<Option<GameState>> future = this.gamesRepo.push(gameUUID, clock.millis());
+                    future.thenAccept(o -> o.forEach(gs -> {
+                        if (gs.phase == GamePhase.ENDED) {
+                            endGame(gameUUID, gs);
+                        }
+                    }));
+                    return Flowable.fromFuture(future.toCompletableFuture());
+                })
+                .filter(s -> s.isDefined())
+                .map(s -> s.get());
+
+        return stateFlow;
+    }
+
+    private void endGame(String gameUUID, GameState gs) {
+        if ( this.gamesFlow.remove(gameUUID) != null) {
+            final ScoreRecord player1 =
+                    createScore(gs.players._1, gs.players._2, gameUUID);
+            final ScoreRecord player2 =
+                    createScore(gs.players._2, gs.players._1, gameUUID);
+            this.scoresRepo.registerScore(List.of(player1,player2));
+            this.gamesRepo.removeGame(gameUUID);
+        }
+    }
+
+    private ScoreRecord createScore( final Player player, final Player opponent, final String gameId) {
+        return new ScoreRecord(
+                player.name,
+                calcResult(player, opponent),
+                player.score,
+                opponent.score,
+                gameId
+                );
+    }
+
+    private GameResult calcResult(final Player player, final Player opponent) {
+        if (player.score > opponent.score) {
+            return GameResult.WON;
+        }
+        if (player.score < opponent.score) {
+            return GameResult.LOST;
+        }
+        throw new IllegalStateException();
+    }
 
     private Action<? super Chain> listGames() {
         return chain -> chain.get(

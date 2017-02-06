@@ -56,4 +56,9 @@ public class GamesRepoES implements GamesRepository {
     public Option<GameState> push(String gameUUID, long time) {
         return persistent.executeAndQuery(rep -> rep.push(gameUUID, time));
     }
+
+    @Override
+    public void removeGame(final String gameUUID) {
+        persistent.execute(rep->rep.removeGame(gameUUID));
+    }
 }
