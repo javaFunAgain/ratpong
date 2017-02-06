@@ -36,12 +36,16 @@ public class Server {
     }
 
     public static RatpackServer createServer(Action<Chain> handlers)
-            throws Exception {
-        return RatpackServer.of(server -> createEmptyServer(server)
-                .handlers(chain ->
-                        chain.prefix("api", handlers)
-                )
-        );
+            {
+                try {
+                    return RatpackServer.of(server -> createEmptyServer(server)
+                            .handlers(chain ->
+                                    chain.prefix("api", handlers)
+                            )
+                    );
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
     }
 
     private Action<Chain> defineApi() {
@@ -59,11 +63,14 @@ public class Server {
                                 .publicAddress(new URI("http://0.0.0.0"))
                                 .port(9000)
                                 .threads(4)
-                ).registryOf(r -> r.add(
-                        new ObjectMapper()
-                                .registerModule(new ParameterNamesModule())
-                                .registerModule(new Jdk8Module())
-                                .registerModule(new JavaTimeModule())
-                                .registerModule(new JavaslangModule())));
+                ).registryOf(r -> r.add(configureJacksonMapping()));
+    }
+
+    public static final ObjectMapper configureJacksonMapping() {
+        return  new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule())
+                .registerModule(new JavaslangModule());
     }
 }
