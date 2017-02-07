@@ -28,6 +28,7 @@ public class Main {
         final GamesService gamesService = new GamesService(gamesRepo, sessionRepo, scoresRepo, clock);
         final ScoresService scoresService = new ScoresService(scoresRepo);
         Server server = new Server(usersService, gamesService, scoresService);
+        server.start();
 
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import javaslang.control.Try;
 import javaslang.jackson.datatype.JavaslangModule;
 import pl.setblack.badass.Politician;
 import pl.setblack.pongi.games.GamesService;
@@ -26,16 +27,22 @@ public class Server {
     private final GamesService gamesService;
     private final ScoresService scoresService;
 
+    private final RatpackServer ratpackServer;
+
     public Server(UsersService usersService, GamesService gamesService, ScoresService scoresService) {
         this.usersService = usersService;
         this.gamesService = gamesService;
         this.scoresService = scoresService;
-        Politician.beatAroundTheBush(this::init);
+        ratpackServer = Try.of(()->createServer(defineApi())).get();
     }
 
-    private void init() throws Exception {
-        createServer(defineApi()).start();
+    public void start() {
+        Try.run(()->this.ratpackServer.start());
 
+    }
+
+    public void stop() {
+        Try.run(()->this.ratpackServer.stop());
     }
 
     public static RatpackServer createServer(Action<Chain> handlers)
@@ -54,6 +61,7 @@ public class Server {
     private Action<Chain> defineApi() {
         return apiChain -> apiChain
                 .prefix("users", usersService.users())
+                .prefix("sessions", usersService.sessions())
                 .prefix("games", gamesService.define())
                 .prefix("score", scoresService.scores());
     }

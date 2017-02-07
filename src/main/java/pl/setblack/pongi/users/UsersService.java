@@ -9,6 +9,7 @@ import pl.setblack.pongi.users.repo.UsersRepositoryNonBlocking;
 import ratpack.exec.Promise;
 import ratpack.func.Action;
 import ratpack.handling.Chain;
+import ratpack.handling.Handler;
 import ratpack.jackson.Jackson;
 
 /**
@@ -28,38 +29,43 @@ public class UsersService {
 
     public Action<Chain> users() {
         return chain -> chain
-                .prefix("add", addUser())
-                .prefix("login", loginUser());
+                .post(":id", addUser());
+
     }
 
-    private Action<Chain> addUser() {
-        return chain -> chain.post(":id", ctx -> {
+    public Action<Chain> sessions() {
+        return chain -> chain
+                .post(":id", loginUser());
+    }
+
+    private Handler addUser() {
+        return ctx -> {
             final String userId = ctx.getPathTokens().get("id");
             ctx.parse(NewUser.class).then(
-              newUser -> {
-                    final Promise result = Promise.async(
-                            d -> d.accept(usersRepo.addUser(userId, newUser.password).thenApply(Jackson::json)
-                            ));
-                    ctx.render(result);
-              }
+                    newUser -> {
+                        final Promise result = Promise.async(
+                                d -> d.accept(usersRepo.addUser(userId, newUser.password).thenApply(Jackson::json)
+                                ));
+                        ctx.render(result);
+                    }
             );
-        });
+        };
     }
 
 
-    private Action<Chain> loginUser() {
-        return chain -> chain.post(":id", ctx -> {
+    private Handler loginUser() {
+        return ctx -> {
             final String userId = ctx.getPathTokens().get("id");
             ctx.parse(LoginData.class).then(
                     loginData -> {
                         final boolean login = usersRepo.login(userId, loginData.password);
                         ctx.render(Jackson.json(
                                 login ?
-                                Option.some(this.sessionsRepo.startSession(userId))
-                                :
-                                Option.none()));
+                                        Option.some(this.sessionsRepo.startSession(userId))
+                                        :
+                                        Option.none()));
                     }
             );
-        });
+        };
     }
 }
