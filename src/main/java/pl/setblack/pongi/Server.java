@@ -72,7 +72,7 @@ public class Server {
         return initial
                 .serverConfig(
                         ServerConfig
-                                .embedded()
+                                .builder()
                                 .publicAddress(new URI("http://0.0.0.0"))
                                 .port(9000)
                                 .threads(4)

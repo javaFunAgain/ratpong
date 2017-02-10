@@ -68,7 +68,7 @@ public class GamesService {
 
                 )
                 //  .prefix("join", joinGame())
-                .prefix("moves", moves ->
+                .prefix("players", moves ->
                         moves.post(":id", movePaddle()))
                 .prefix("stream", stream ->
                         stream.get(":id", streamGame(stream)));
