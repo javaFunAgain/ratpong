@@ -4,6 +4,7 @@ import javaslang.control.Option;
 import pl.setblack.pongi.users.api.LoginData;
 import pl.setblack.pongi.users.api.NewUser;
 import pl.setblack.pongi.users.repo.SessionsRepo;
+import pl.setblack.pongi.users.repo.UsersRepoES;
 import pl.setblack.pongi.users.repo.UsersRepository;
 import pl.setblack.pongi.users.repo.UsersRepositoryNonBlocking;
 import ratpack.exec.Promise;
@@ -21,19 +22,25 @@ public class UsersService {
 
     private final SessionsRepo sessionsRepo;
 
-
     public UsersService(UsersRepository usersRepo, SessionsRepo sessionsRepo) {
         this.usersRepo = new UsersRepositoryNonBlocking(usersRepo);
         this.sessionsRepo = sessionsRepo;
     }
 
-    public Action<Chain> users() {
+    public Action<Chain> usersApi() {
+        return apiChain -> apiChain
+                .prefix("users", users())
+                .prefix("sessions", sessions());
+
+    }
+
+    private Action<Chain> users() {
         return chain -> chain
                 .post(":id", addUser());
 
     }
 
-    public Action<Chain> sessions() {
+    private Action<Chain> sessions() {
         return chain -> chain
                 .post(":id", loginUser());
     }

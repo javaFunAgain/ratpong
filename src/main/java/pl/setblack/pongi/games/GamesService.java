@@ -16,8 +16,10 @@ import pl.setblack.pongi.users.api.Session;
 import pl.setblack.pongi.users.repo.SessionsRepo;
 import ratpack.exec.Promise;
 import ratpack.func.Action;
+import ratpack.func.Block;
 import ratpack.handling.Chain;
 import ratpack.handling.Context;
+import ratpack.handling.Handler;
 import ratpack.jackson.Jackson;
 import ratpack.jackson.JsonRender;
 import ratpack.websocket.WebSockets;
@@ -54,83 +56,86 @@ public class GamesService {
 
     public Action<Chain> define() {
         return chain -> chain
-                .prefix("games", listGames())
-                .prefix("create", createGame())
-                .prefix("join", joinGame())
-                .prefix("move", movePaddle())
-                .prefix("stream", streamGame());
+                .prefix("games", games ->
+                        games.post(":id", joinGame())
+                                .all(
+                                        noGameId ->
+                                                noGameId.
+                                                        byMethod(m -> m
+                                                                .get(listGames(noGameId))
+                                                                .post(createGame(noGameId)))
+                                )
+
+                )
+                //  .prefix("join", joinGame())
+                .prefix("moves", moves ->
+                        moves.post(":id", movePaddle()))
+                .prefix("stream", stream ->
+                        stream.get(":id", streamGame(stream)));
     }
 
-    private Action<? super Chain> movePaddle() {
-        return chain -> chain.post(":id", ctx -> {
+    private Handler movePaddle() {
+        return ctx -> {
             final String gameId = ctx.getPathTokens().get("id");
             ctx.getRequest().getBody().then(body -> {
                 final float targetY = Float.parseFloat(body.getText());
                 renderAsync(ctx, session -> gamesRepo.movePaddle(gameId, session.userId, targetY));
             });
-
-        });
+        };
     }
 
-    private Action<? super Chain> streamGame() {
-        return chain -> chain.get(":id", ctx -> {
-                    final String gameId = ctx.getPathTokens().get("id");
-                    final Option<Flowable<GameState>> gsOpt = Option.of(this.gamesFlow.get(gameId));
+    private Handler streamGame(Chain chain) {
+        return ctx -> {
+            final String gameId = ctx.getPathTokens().get("id");
+            final Option<Flowable<GameState>> gsOpt = Option.of(this.gamesFlow.get(gameId));
+            gsOpt.forEach(gsFlow -> {
+                final Flowable<String> stringFlow = gsFlow
 
-                    gsOpt.forEach(gsFlow -> {
+                        .map(val -> {
+                            final String result =
+                                    chain.getRegistry()
+                                            .get(ObjectMapper.class)
+                                            .writeValueAsString(val);
 
-                        final Flowable<String> stringFlow = gsFlow
-
-                                .map(val -> {
-                                    final String result =
-                                            chain.getRegistry()
-                                                    .get(ObjectMapper.class)
-                                                    .writeValueAsString(val);
-
-                                    return result;
-                                });
-
-                        WebSockets.websocketBroadcast(ctx, stringFlow);
-                    });
-                }
-        );
-
-    }
-
-    private Action<? super Chain> createGame() {
-        return chain -> chain.post(ctx -> {
-            ctx.getRequest().getBody().then(gameName -> {
-                final UUID uuid = UUID.randomUUID();
-                renderAsync(
-                        ctx,
-                        sess -> gamesRepo
-                                .createGame(uuid.toString(), gameName.getText(), sess.userId));
-            });
-        });
-    }
-
-    private Action<? super Chain> joinGame() {
-        return chain -> chain.post(ctx -> {
-            ctx.getRequest().getBody().then(body -> {
-                final String gameUUID = body.getText();
-
-                renderAsync(
-                        ctx,
-                        sess -> {
-                            final CompletionStage<Option<GameState>> state = gamesRepo
-                                    .joinGame(gameUUID, sess.userId, this.clock.millis());
-                            return state.thenApply(gameOption -> {
-                                gameOption.forEach(game -> {
-                                    if (game.phase == GamePhase.STARTED) {
-                                        this.gamesFlow.computeIfAbsent(gameUUID, this::createFlow);
-                                    }
-                                });
-                                return gameOption;
-                            });
-
+                            return result;
                         });
+
+                WebSockets.websocketBroadcast(ctx, stringFlow);
             });
-        });
+        };
+
+    }
+
+    private Block createGame(Context ctx) {
+        return () ->
+                ctx.getRequest().getBody().then(gameName -> {
+                    final UUID uuid = UUID.randomUUID();
+                    renderAsync(
+                            ctx,
+                            sess -> gamesRepo
+                                    .createGame(uuid.toString(), gameName.getText(), sess.userId));
+                });
+
+    }
+
+    private Handler joinGame() {
+        return ctx -> {
+            final String gameUUID = ctx.getPathTokens().get("id");
+            renderAsync(
+                    ctx,
+                    sess -> {
+                        final CompletionStage<Option<GameState>> state = gamesRepo
+                                .joinGame(gameUUID, sess.userId, this.clock.millis());
+                        return state.thenApply(gameOption -> {
+                            gameOption.forEach(game -> {
+                                if (game.phase == GamePhase.STARTED) {
+                                    this.gamesFlow.computeIfAbsent(gameUUID, this::createFlow);
+                                }
+                            });
+                            return gameOption;
+                        });
+                    });
+        };
     }
 
     private Flowable<GameState> createFlow(String gameUUID) {
@@ -151,24 +156,24 @@ public class GamesService {
     }
 
     private void endGame(String gameUUID, GameState gs) {
-        if ( this.gamesFlow.remove(gameUUID) != null) {
+        if (this.gamesFlow.remove(gameUUID) != null) {
             final ScoreRecord player1 =
                     createScore(gs.players._1, gs.players._2, gameUUID);
             final ScoreRecord player2 =
                     createScore(gs.players._2, gs.players._1, gameUUID);
-            this.scoresRepo.registerScore(List.of(player1,player2));
+            this.scoresRepo.registerScore(List.of(player1, player2));
             this.gamesRepo.removeGame(gameUUID);
         }
     }
 
-    private ScoreRecord createScore( final Player player, final Player opponent, final String gameId) {
+    private ScoreRecord createScore(final Player player, final Player opponent, final String gameId) {
         return new ScoreRecord(
                 player.name,
                 calcResult(player, opponent),
                 player.score,
                 opponent.score,
                 gameId
-                );
+        );
     }
 
     private GameResult calcResult(final Player player, final Player opponent) {
@@ -181,9 +186,8 @@ public class GamesService {
         throw new IllegalStateException();
     }
 
-    private Action<? super Chain> listGames() {
-        return chain -> chain.get(
-                ctx -> renderAsync(ctx, (any) -> gamesRepo.listGames()));
+    private Block listGames(Context ctx) {
+        return () -> renderAsync(ctx, (any) -> gamesRepo.listGames());
     }
 
     private <T> void renderAsync(Context ctx,

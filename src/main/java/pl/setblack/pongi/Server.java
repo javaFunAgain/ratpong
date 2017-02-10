@@ -12,6 +12,7 @@ import pl.setblack.pongi.scores.ScoresService;
 import pl.setblack.pongi.users.UsersService;
 import ratpack.func.Action;
 import ratpack.handling.Chain;
+import ratpack.handling.RequestLogger;
 import ratpack.server.RatpackServer;
 import ratpack.server.RatpackServerSpec;
 import ratpack.server.ServerConfig;
@@ -50,7 +51,8 @@ public class Server {
                 try {
                     return RatpackServer.of(server -> createEmptyServer(server)
                             .handlers(chain ->
-                                    chain.prefix("api", handlers)
+                                    chain.all(RequestLogger.ncsa())
+                                    .prefix("api", handlers)
                             )
                     );
                 } catch (Exception e) {
@@ -60,8 +62,7 @@ public class Server {
 
     private Action<Chain> defineApi() {
         return apiChain -> apiChain
-                .prefix("users", usersService.users())
-                .prefix("sessions", usersService.sessions())
+                .insert(usersService.usersApi())
                 .prefix("games", gamesService.define())
                 .prefix("score", scoresService.scores());
     }

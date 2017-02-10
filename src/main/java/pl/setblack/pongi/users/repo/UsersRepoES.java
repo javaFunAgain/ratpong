@@ -3,6 +3,7 @@ package pl.setblack.pongi.users.repo;
 import pl.setblack.airomem.core.Persistent;
 import pl.setblack.pongi.users.api.RegUserStatus;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -14,12 +15,18 @@ public class UsersRepoES implements UsersRepository{
     private final Persistent<UsersRepositoryInMemory> controller;
 
     public UsersRepoES() {
-        controller = Persistent.loadOptional(
-                Paths.get("airomem/usersStore"),
-                () -> new UsersRepositoryInMemory());
-
+        this( Paths.get("airomem/usersStore"));
     }
 
+    public UsersRepoES(Path where) {
+        controller = Persistent.loadOptional(
+                where,
+                () -> new UsersRepositoryInMemory());
+    }
+
+    public void close() {
+        this.controller.close();
+    }
 
     @Override
     public RegUserStatus addUser(String login, String pass) {
