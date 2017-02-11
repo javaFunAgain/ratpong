@@ -69,7 +69,7 @@ public class Server {
         return apiChain -> apiChain
                 .insert(usersService.usersApi())
                 .prefix("games", gamesService.define())
-                .prefix("score", scoresService.scores());
+                .prefix("score", score->score.get("scores", ctx->ctx.render("[]")));
     }
 
     private static RatpackServerSpec createEmptyServer(RatpackServerSpec initial)

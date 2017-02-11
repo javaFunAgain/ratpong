@@ -14,23 +14,22 @@ import java.util.concurrent.Executors;
  * Created by jarek on 2/5/17.
  */
 public class ScoresRepositoryNonBlocking {
-    private final Executor writesExecutor = Executors.newSingleThreadExecutor();
 
-    private final ScoresRepository repository;
+
 
     public ScoresRepositoryNonBlocking(ScoresRepository repository) {
-        this.repository = repository;
+
     }
 
     public void registerScore(List<ScoreRecord> rec){
-            this.writesExecutor.execute(()->repository.registerScore(rec));
+
     }
 
     public CompletionStage<Option<UserScore>> getUserScore(String userId) {
-        return CompletableFuture.completedFuture(repository.getUserScore(userId));
+       throw new UnsupportedOperationException();
     }
 
     public CompletionStage<List<UserScore>> getTopScores(final int limit) {
-        return CompletableFuture.completedFuture(repository.getTopScores(limit));
+        throw new UnsupportedOperationException();
     }
 }
