@@ -56,7 +56,10 @@ public class Server {
                                     chain.all(RequestLogger.ncsa())
                                     .prefix("api", handlers)
 
-                                            .files(fileHandlerSpec -> fileHandlerSpec.dir("src/main/webapp"))
+                                            .files(fileHandlerSpec -> fileHandlerSpec
+                                                    .dir("src/main/webapp")
+                                                    .indexFiles("index.html")
+                                            )
 
                             )
                     );
