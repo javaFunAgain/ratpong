@@ -70,7 +70,7 @@ public class GameState implements Serializable {
     public GameState push(long newTime, final Random rnd) {
         if ( this.phase == GamePhase.STARTED) {
             long diff = newTime - this.updateTime;
-            float scale = diff / 5.0f;
+            float scale = diff / GameParams.RELATIVE_SPEED;
             final Tuple2<Ball, Tuple2<Player,Player>> newPositions = this.ball
                     .move(scale)
                     .bounce(this.players,rnd );
