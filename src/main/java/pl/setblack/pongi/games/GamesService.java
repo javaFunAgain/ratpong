@@ -14,6 +14,7 @@ import pl.setblack.pongi.scores.ScoreRecord;
 import pl.setblack.pongi.scores.repo.ScoresRepositoryNonBlocking;
 import pl.setblack.pongi.users.api.Session;
 import pl.setblack.pongi.users.repo.SessionsRepo;
+import ratpack.exec.Blocking;
 import ratpack.exec.Promise;
 import ratpack.func.Action;
 import ratpack.func.Block;
@@ -76,6 +77,7 @@ public class GamesService {
 
     private Handler movePaddle() {
         return ctx -> {
+
             final String gameId = ctx.getPathTokens().get("id");
             ctx.getRequest().getBody().then(body -> {
                 final float targetY = Float.parseFloat(body.getText());

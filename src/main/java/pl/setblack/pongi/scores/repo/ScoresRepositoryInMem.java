@@ -7,19 +7,29 @@ import javaslang.control.Option;
 import pl.setblack.pongi.scores.ScoreRecord;
 import pl.setblack.pongi.scores.UserScore;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class ScoresRepositoryInMem implements ScoresRepository{
+public class ScoresRepositoryInMem implements ScoresRepository, Serializable{
+
+    private volatile HashMap<String, UserScore> scores = HashMap.empty();
 
 
     public ScoresRepositoryInMem() {
-
     }
 
 
     @Override
     public void registerScore(List<ScoreRecord> rec) {
-        throw new UnsupportedOperationException();
+        rec.forEach( singleRecord -> {
+            scores
+                    .get(singleRecord.userId)
+                    .orElse( Option.some(UserScore.emptyFor(singleRecord.userId)))
+                    .forEach( oldRecord ->
+                            scores = scores.put(singleRecord.userId, oldRecord.add(singleRecord)) );
+            }
+        );
+
     }
 
 
@@ -30,8 +40,13 @@ public class ScoresRepositoryInMem implements ScoresRepository{
 
     @Override
     public List<UserScore> getTopScores(int limit) {
-        throw new UnsupportedOperationException();
+         return this.scores.values()
+                 .sortBy( score -> score.totalScore )
+                 .reverse()
+                 .take(limit)
+                 .toList();
     }
+
 
 
 }

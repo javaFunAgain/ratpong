@@ -11,6 +11,8 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Created by jarek on 2/8/17.
  */
@@ -28,7 +30,7 @@ class UsersServiceTest {
                             .post("/api/users/aa")
                             .getBody().getText();
 
-                    System.out.println(response);
+                    assertEquals( "{\"problem\":null,\"ok\":true}", response );
                 }
         );
     }

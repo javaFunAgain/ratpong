@@ -5,7 +5,7 @@ package pl.setblack.pongi.games.api;
  */
 public final class GameParams {
 
-    public static final  float RELATIVE_SPEED  = 5.0f;
+    public static final  float SPEED_DIVIDER = 0.4f;
 
 
     private GameParams() {

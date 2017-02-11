@@ -1,9 +1,11 @@
 package pl.setblack.pongi.scores;
 
+import java.io.Serializable;
+
 /**
  * Created by jarek on 2/5/17.
  */
-public class UserScore {
+public class UserScore implements Serializable {
     public final String userId;
     public final int totalScore;
     public final int gamesWon;
