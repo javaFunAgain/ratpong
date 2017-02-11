@@ -18,6 +18,8 @@ import ratpack.server.RatpackServerSpec;
 import ratpack.server.ServerConfig;
 
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by jarek on 1/29/17.
@@ -53,6 +55,9 @@ public class Server {
                             .handlers(chain ->
                                     chain.all(RequestLogger.ncsa())
                                     .prefix("api", handlers)
+
+                                            .files(fileHandlerSpec -> fileHandlerSpec.dir("src/main/webapp"))
+
                             )
                     );
                 } catch (Exception e) {
@@ -69,13 +74,17 @@ public class Server {
 
     private static RatpackServerSpec createEmptyServer(RatpackServerSpec initial)
             throws Exception {
+        Path currentRelativePath = Paths.get("").toAbsolutePath();
+        System.out.println("path is:" + currentRelativePath);
         return initial
                 .serverConfig(
                         ServerConfig
                                 .builder()
+                               .baseDir(currentRelativePath)
                                 .publicAddress(new URI("http://0.0.0.0"))
                                 .port(9000)
                                 .threads(4)
+                                //
                 ).registryOf(r -> r.add(configureJacksonMapping()));
     }
 
