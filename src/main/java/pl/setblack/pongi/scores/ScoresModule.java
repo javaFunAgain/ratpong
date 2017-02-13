@@ -9,10 +9,10 @@ import pl.setblack.pongi.scores.repo.ScoresRepositoryNonBlocking;
  */
 public class ScoresModule {
 
-    private final ScoresRepository scoresRepository;
+    private final ScoresRepositoryNonBlocking scoresRepository;
 
     public ScoresModule(ScoresRepository scoresRepository) {
-        this.scoresRepository = scoresRepository;
+        this.scoresRepository = new ScoresRepositoryNonBlocking(scoresRepository);
     }
 
     public ScoresModule() {
@@ -20,6 +20,10 @@ public class ScoresModule {
     }
 
     public ScoresService createService() {
-        return new ScoresService(new ScoresRepositoryNonBlocking(scoresRepository));
+        return new ScoresService(scoresRepository);
+    }
+
+    public ScoresRepositoryNonBlocking getScoresRepository() {
+        return this.scoresRepository;
     }
 }
