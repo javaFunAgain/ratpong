@@ -56,7 +56,7 @@ class UserPersistentRepoText extends UserRepositoryBase {
 
 }
 
-abstract class UserRepositoryBase {
+class UserRepositoryBase {
 
     protected  UsersRepository usersRepository;
 

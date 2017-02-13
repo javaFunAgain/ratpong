@@ -1,6 +1,5 @@
 package pl.setblack.pongi.games.repo;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javaslang.collection.Seq;
 import javaslang.control.Option;
 import pl.setblack.pongi.games.api.GameInfo;

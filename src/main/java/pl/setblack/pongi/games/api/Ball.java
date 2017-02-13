@@ -41,7 +41,6 @@ public class Ball extends GameObject {
     }
 
     public Ball move(float scale) {
-        System.out.println(this.toString());
         return new Ball( this.x + speed.x*scale, this.y + speed.y*scale, this.speed);
     }
 
@@ -89,14 +88,6 @@ public class Ball extends GameObject {
 
     public Tuple2<Ball,Tuple2<Player, Player>> bounce(Tuple2<Player,Player> players, final Random rnd) {
         return this.bounceY().bounceX(players, rnd);
-    }
-
-    @Override
-    public String toString() {
-        return "Ball{" +
-                "("+x + "," + y+ ")"+
-                "speed=" + speed +
-                '}';
     }
 }
 

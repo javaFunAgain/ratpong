@@ -40,7 +40,7 @@ public class Server {
     }
 
     public void start() {
-        Try.run(()->this.ratpackServer.start());
+        Try.run(()->this.ratpackServer.start()).onFailure( System.out::println);
 
     }
 
@@ -72,7 +72,7 @@ public class Server {
         return apiChain -> apiChain
                 .insert(usersService.usersApi())
                 .prefix("games", gamesService.define())
-                .prefix("score", scoresService.scores());
+                .prefix("score",  scoresService.scores());
     }
 
     private static RatpackServerSpec createEmptyServer(RatpackServerSpec initial)

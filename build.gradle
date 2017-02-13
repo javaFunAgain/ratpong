@@ -7,7 +7,6 @@ buildscript {
     }
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M3'
-
     }
 }
 
@@ -37,11 +36,11 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.6'
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.8.6'
 
-
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
     testCompile group: 'io.ratpack', name: 'ratpack-test', version: '1.4.4'
 
 }
+
 

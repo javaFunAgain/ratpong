@@ -1,11 +1,16 @@
 package pl.setblack.pongi.scores;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Created by jarek on 2/5/17.
  */
-public class UserScore implements Serializable {
+@JsonDeserialize
+@Immutable
+public class UserScore {
     public final String userId;
     public final int totalScore;
     public final int gamesWon;
@@ -14,6 +19,7 @@ public class UserScore implements Serializable {
     public final int pointsScored;
     public final int pointsLost;
 
+    @JsonCreator
     public UserScore(String userId, int totalScore, int gamesWon, int gamesLost, int gamesPlayed, int pointsScored, int pointsLost) {
         this.userId = userId;
         this.totalScore = totalScore;

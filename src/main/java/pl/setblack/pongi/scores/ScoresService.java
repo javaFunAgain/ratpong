@@ -23,7 +23,9 @@ public class ScoresService {
 
     public Action<Chain> scores() {
         return chain -> chain
-                .prefix("scores", ctx->ctx.get( getScores()));
+                .prefix("scores", ctx->
+                     ctx.get( getScores())
+                );
     }
 
     private Handler getScores() {
@@ -33,7 +35,11 @@ public class ScoresService {
                     .map( Integer::parseInt)
                     .getOrElse(20);
             ctx.render(Promise.async(
-                    downstream->downstream.accept( nonBlockingRepo.getTopScores(limit).thenApply(Jackson::json))));
+                    downstream->{
+                         downstream.accept( nonBlockingRepo.getTopScores(limit)
+                                 .thenApply( obj -> obj)
+                                 .thenApply(Jackson::json));
+                    }));
         };
     }
 }
