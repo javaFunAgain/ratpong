@@ -34,15 +34,14 @@ public class GamesRepositoryNonBlocking {
     }
 
 
-    public CompletionStage<Option<GameState>> joinGame(final String uuid, final String userId, final long time) {
-        return callLongOneOperation(() -> gamesRepo.joinGame(uuid, userId, time));
+    public CompletionStage<Option<GameState>> joinGame(final String uuid, final String userId) {
+        return callLongOneOperation(() -> gamesRepo.joinGame(uuid, userId));
     }
 
 
 
-    public CompletionStage<Option<GameState>> push(final String gameUUID,
-                                                   final long time) {
-        return callLongOneOperation( ()->gamesRepo.push(gameUUID, time));
+    public CompletionStage<Option<GameState>> push(final String gameUUID) {
+        return callLongOneOperation( ()->gamesRepo.push(gameUUID));
     }
 
     public CompletionStage<Boolean> movePaddle(String gameId, String userId, float targetY) {

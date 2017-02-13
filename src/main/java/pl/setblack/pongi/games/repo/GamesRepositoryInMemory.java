@@ -7,6 +7,7 @@ import pl.setblack.pongi.games.api.GameInfo;
 import pl.setblack.pongi.games.api.GameState;
 
 import java.io.Serializable;
+import java.time.Clock;
 import java.util.Random;
 
 /**
@@ -19,6 +20,12 @@ public class GamesRepositoryInMemory implements GamesRepository, Serializable {
     private volatile HashMap<String, GameState> allGamesState = HashMap.empty();
 
     private final Random random = new Random(137);
+
+    private final Clock clock;
+
+    public GamesRepositoryInMemory(Clock clock) {
+        this.clock = clock;
+    }
 
     @Override
     public Option<GameInfo> createGame(final String uuid, final String name, final String userId) {
@@ -35,25 +42,24 @@ public class GamesRepositoryInMemory implements GamesRepository, Serializable {
         return allGamesInfo.values();
     }
 
-    @Override
-    public Option<GameState> startNewGame(final GameInfo info, long time) {
+    public Option<GameState> startNewGame(final GameInfo info) {
         final Option<GameState> currentState =
                 this.allGamesState.get(info.uuid);
         return currentState.orElse(() -> {
-            Option<GameState> newState = GameState.startFrom(info, time, this.random);
+            Option<GameState> newState = GameState.startFrom(info, this.clock.millis(), this.random);
             newState.forEach( s -> this.allGamesState = this.allGamesState.put(info.uuid, s));
             return newState;
         });
 
     }
     @Override
-    public Option<GameState> joinGame(final String uuid, final String userId, final long time) {
+    public Option<GameState> joinGame(final String uuid, final String userId) {
         return this.allGamesInfo.get(uuid)
                 .flatMap(g -> g.withPlayer(userId))
                 .flatMap(g -> {
                     this.allGamesInfo = this.allGamesInfo.put(uuid, g);
 
-                    return startNewGame(g, time);
+                    return startNewGame(g);
                 });
     }
     @Override
@@ -72,10 +78,10 @@ public class GamesRepositoryInMemory implements GamesRepository, Serializable {
     }
 
     @Override
-    public Option<GameState> push(String gameUUID, long time) {
+    public Option<GameState> push(String gameUUID) {
         final Option<GameState> gameOpt = this.allGamesState.get( gameUUID);
         return gameOpt.map( game -> {
-            final GameState newState= game.push(time, this.random);
+            final GameState newState= game.push(this.clock.millis(), this.random);
             this.allGamesState = this.allGamesState.put(gameUUID, newState);
             return newState;
         });

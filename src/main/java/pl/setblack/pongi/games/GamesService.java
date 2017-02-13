@@ -32,9 +32,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-/**
- * Created by jarek on 2/1/17.
- */
 public class GamesService {
 
     private final GamesRepositoryNonBlocking gamesRepo;
@@ -43,15 +40,17 @@ public class GamesService {
 
     private final ScoresRepositoryNonBlocking scoresRepo;
 
-    private final Clock clock;
 
     private final ConcurrentHashMap<String, Flowable<GameState>> gamesFlow = new ConcurrentHashMap<>();
 
-    public GamesService(final GamesRepository gamesRepo, SessionsRepo sessionsRepo, ScoresRepositoryNonBlocking scoresRepo, Clock clock) {
+    public GamesService(
+            final GamesRepository gamesRepo,
+            final SessionsRepo sessionsRepo,
+            final ScoresRepositoryNonBlocking scoresRepo) {
         this.gamesRepo = new GamesRepositoryNonBlocking(gamesRepo);
         this.sessionsRepo = sessionsRepo;
         this.scoresRepo = scoresRepo;
-        this.clock = clock;
+
     }
 
     public Action<Chain> define() {
@@ -125,7 +124,7 @@ public class GamesService {
                     ctx,
                     sess -> {
                         final CompletionStage<Option<GameState>> state = gamesRepo
-                                .joinGame(gameUUID, sess.userId, this.clock.millis());
+                                .joinGame(gameUUID, sess.userId);
                         return state.thenApply(gameOption -> {
                             gameOption.forEach(game -> {
                                 if (game.phase == GamePhase.STARTED) {
@@ -141,7 +140,7 @@ public class GamesService {
     private Flowable<GameState> createFlow(String gameUUID) {
         final Flowable<GameState> stateFlow = Flowable.interval(1000, 50, TimeUnit.MILLISECONDS)
                 .flatMap(whatever -> {
-                    final CompletionStage<Option<GameState>> future = this.gamesRepo.push(gameUUID, clock.millis());
+                    final CompletionStage<Option<GameState>> future = this.gamesRepo.push(gameUUID);
                     future.thenAccept(o -> o.forEach(gs -> {
                         if (gs.phase == GamePhase.ENDED) {
                             endGame(gameUUID, gs);

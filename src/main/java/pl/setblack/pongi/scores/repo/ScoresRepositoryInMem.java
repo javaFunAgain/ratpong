@@ -7,9 +7,11 @@ import javaslang.control.Option;
 import pl.setblack.pongi.scores.ScoreRecord;
 import pl.setblack.pongi.scores.UserScore;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class ScoresRepositoryInMem implements ScoresRepository{
+public class ScoresRepositoryInMem implements ScoresRepository, Serializable{
+    private static final long serialVersionUID = 1L;
     private volatile PriorityQueue<UserScore> bestScores;
     private volatile HashMap<String, UserScore> userScores;
 

@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.annotation.concurrent.Immutable;
+import java.io.Serializable;
 
 /**
  * Created by jarek on 2/5/17.
  */
 @JsonDeserialize
 @Immutable
-public class UserScore {
+public class UserScore implements Serializable{
+    private static final long serialVersionUID = 1L;
     public final String userId;
     public final int totalScore;
     public final int gamesWon;

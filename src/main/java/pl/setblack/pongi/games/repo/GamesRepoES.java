@@ -7,18 +7,16 @@ import pl.setblack.pongi.games.api.GameInfo;
 import pl.setblack.pongi.games.api.GameState;
 
 import java.nio.file.Paths;
+import java.time.Clock;
 
-/**
- * Created by jarek on 2/4/17.
- */
 public class GamesRepoES implements GamesRepository {
 
     final Persistent<GamesRepositoryInMemory> persistent;
 
-    public GamesRepoES() {
+    public GamesRepoES(final Clock clock) {
         persistent = Persistent.loadOptional(
                 Paths.get("airomem/games"),
-                ()->new GamesRepositoryInMemory()
+                ()->new GamesRepositoryInMemory(clock)
         );
     }
 
@@ -32,14 +30,11 @@ public class GamesRepoES implements GamesRepository {
         return persistent.query( rep->rep.listGames());
     }
 
-    @Override
-    public Option<GameState> startNewGame(GameInfo info, long time) {
-        return persistent.executeAndQuery(rep -> rep.startNewGame(info, time));
-    }
+
 
     @Override
-    public Option<GameState> joinGame(String uuid, String userId, long time) {
-        return persistent.executeAndQuery(rep -> rep.joinGame(uuid, userId, time));
+    public Option<GameState> joinGame(String uuid, String userId) {
+        return persistent.executeAndQuery(rep -> rep.joinGame(uuid, userId));
     }
 
     @Override
@@ -53,8 +48,8 @@ public class GamesRepoES implements GamesRepository {
     }
 
     @Override
-    public Option<GameState> push(String gameUUID, long time) {
-        return persistent.executeAndQuery(rep -> rep.push(gameUUID, time));
+    public Option<GameState> push(String gameUUID) {
+        return persistent.executeAndQuery(rep -> rep.push(gameUUID));
     }
 
     @Override

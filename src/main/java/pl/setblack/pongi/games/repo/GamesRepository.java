@@ -13,15 +13,14 @@ public interface GamesRepository {
 
     Seq<GameInfo> listGames();
 
-    Option<GameState> startNewGame(GameInfo info, long time);
 
-    Option<GameState> joinGame(String uuid, String userId, long time);
+    Option<GameState> joinGame(String uuid, String userId);
 
     Option<GameState> getGame(String uuid);
 
     boolean movePaddle(String gameId, String userId, float targetY);
 
-    Option<GameState> push(String gameUUID, long time);
+    Option<GameState> push(String gameUUID);
 
     void removeGame(String gameUUID);
 
