@@ -4,12 +4,12 @@
 This is sample implementation of classic game PONG. Or more precisely REST server that
 support internet play in PONG.
 
-For client code go to : .................
+For client code go to : https://github.com/jarekratajski/scalajspounk
 
 
 # Runing?
 Just call ```gradle run ```
-And the navigate to localhost:9000/...
+And the navigate to localhost:9000
 
 
 # Purpose
@@ -34,7 +34,7 @@ Pleas bear in mind that PONG is a registered trademark that belongs to Atari Cor
 This source code is created only for educational purposes and you may use it according to provided license.
 
 # TODO
-- Use JOOQ for simple SQL persitence,
+- Use JOOQ for simple SQL persistence,
 - better exception handling and diagnostics,
  
 

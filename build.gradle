@@ -14,6 +14,9 @@ apply plugin: 'java'
 
 apply plugin: 'org.junit.platform.gradle.plugin'
 
+apply plugin: 'application'
+
+
 sourceCompatibility = 1.8
 ext.junitJupiterVersion  = '5.0.0-M3'
 
@@ -24,6 +27,8 @@ compileJava {
 repositories {
     mavenCentral()
 }
+
+mainClassName = "pl.setblack.pongi.Main"
 
 dependencies {
     compile group: 'io.ratpack', name: 'ratpack-core', version: '1.4.4'
