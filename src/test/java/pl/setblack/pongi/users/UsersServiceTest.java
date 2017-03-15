@@ -1,6 +1,5 @@
 package pl.setblack.pongi.users;
 
-import ratpack.http.TypedData;
 import org.junit.jupiter.api.Test;
 import pl.setblack.pongi.Server;
 import pl.setblack.pongi.users.repo.SessionsRepo;
@@ -11,9 +10,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
-/**
- * Created by jarek on 2/8/17.
- */
+
 class UsersServiceTest {
     private final Clock clock = Clock.fixed(Instant.parse("2007-12-03T10:15:30.00Z"), ZoneId.of("GMT"));
 
@@ -36,7 +33,7 @@ class UsersServiceTest {
     private EmbeddedApp prepareServer() {
         final UsersService usersService = initService();
         return EmbeddedApp.fromServer(
-                Server.createServer(usersService.usersApi())
+                Server.createUnconfiguredServer(usersService.usersApi())
         );
     }
 

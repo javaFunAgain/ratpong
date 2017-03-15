@@ -69,7 +69,7 @@ class ScoresServiceTest {
             final ScoresService testedService = new ScoresService(nonBlockingWrapper);
             repository.registerScore(testCase._3);
             EmbeddedApp.fromServer(
-                    Server.createServer(testedService.scores())
+                    Server.createUnconfiguredServer(testedService.scores())
             )
                     .test(testHttpClient -> {
                         final ReceivedResponse resp = testHttpClient.get("api/scores");

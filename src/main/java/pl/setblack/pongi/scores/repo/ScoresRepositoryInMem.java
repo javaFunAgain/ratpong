@@ -59,7 +59,8 @@ public class ScoresRepositoryInMem implements ScoresRepository, Serializable{
     }
 
     private static final class ScoreComparator
-            implements Comparator<UserScore> {
+            implements Comparator<UserScore>, Serializable {
+        private static final long serialVersionUID = 1L;
         @Override
         public int compare(UserScore o1, UserScore o2) {
             return o2.totalScore - o1.totalScore;
