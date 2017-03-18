@@ -30,6 +30,10 @@ class UsersServiceTest {
         );
     }
 
+    /*
+     * Prepare ratpack server  - (but only starting one service UsersService).
+     *
+     */
     private EmbeddedApp prepareServer() {
         final UsersService usersService = initService();
         return EmbeddedApp.fromServer(
@@ -38,6 +42,9 @@ class UsersServiceTest {
     }
 
 
+    /*
+     * Prepare USerService for tests (it means we create it with in memory UsersRepository implementation)
+     */
     private UsersService initService (){
 
         return new UsersService(new UsersRepositoryInMemory(),

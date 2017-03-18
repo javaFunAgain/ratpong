@@ -8,10 +8,10 @@ import pl.setblack.pongi.games.api.GamePhase;
 import pl.setblack.pongi.games.api.GameState;
 import pl.setblack.pongi.games.api.Player;
 import pl.setblack.pongi.games.repo.GamesRepository;
-import pl.setblack.pongi.games.repo.GamesRepositoryNonBlocking;
+import pl.setblack.pongi.games.repo.GamesRepositoryProcessor;
 import pl.setblack.pongi.scores.GameResult;
 import pl.setblack.pongi.scores.ScoreRecord;
-import pl.setblack.pongi.scores.repo.ScoresRepositoryNonBlocking;
+import pl.setblack.pongi.scores.repo.ScoresRepositoryProcessor;
 import pl.setblack.pongi.users.api.Session;
 import pl.setblack.pongi.users.repo.SessionsRepo;
 import ratpack.exec.Promise;
@@ -24,7 +24,6 @@ import ratpack.jackson.Jackson;
 import ratpack.jackson.JsonRender;
 import ratpack.websocket.WebSockets;
 
-import java.time.Clock;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -34,11 +33,11 @@ import java.util.function.Function;
 
 public class GamesService {
 
-    private final GamesRepositoryNonBlocking gamesRepo;
+    private final GamesRepositoryProcessor gamesRepo;
 
     private final SessionsRepo sessionsRepo;
 
-    private final ScoresRepositoryNonBlocking scoresRepo;
+    private final ScoresRepositoryProcessor scoresRepo;
 
 
     private final ConcurrentHashMap<String, Flowable<GameState>> gamesFlow = new ConcurrentHashMap<>();
@@ -46,8 +45,8 @@ public class GamesService {
     public GamesService(
             final GamesRepository gamesRepo,
             final SessionsRepo sessionsRepo,
-            final ScoresRepositoryNonBlocking scoresRepo) {
-        this.gamesRepo = new GamesRepositoryNonBlocking(gamesRepo);
+            final ScoresRepositoryProcessor scoresRepo) {
+        this.gamesRepo = new GamesRepositoryProcessor(gamesRepo);
         this.sessionsRepo = sessionsRepo;
         this.scoresRepo = scoresRepo;
 

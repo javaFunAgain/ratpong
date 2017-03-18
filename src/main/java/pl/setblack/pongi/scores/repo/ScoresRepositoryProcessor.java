@@ -13,12 +13,12 @@ import java.util.concurrent.Executors;
 /**
  * Created by jarek on 2/5/17.
  */
-public class ScoresRepositoryNonBlocking {
+public class ScoresRepositoryProcessor {
     private final Executor writesExecutor = Executors.newSingleThreadExecutor();
 
     private final ScoresRepository repository;
 
-    public ScoresRepositoryNonBlocking(ScoresRepository repository) {
+    public ScoresRepositoryProcessor(ScoresRepository repository) {
         this.repository = repository;
     }
 

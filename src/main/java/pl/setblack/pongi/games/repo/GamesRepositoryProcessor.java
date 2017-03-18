@@ -14,13 +14,13 @@ import java.util.function.Supplier;
 /**
  * Created by jarek on 2/2/17.
  */
-public class GamesRepositoryNonBlocking {
+public class GamesRepositoryProcessor {
 
     private final GamesRepository gamesRepo;
 
     private final Executor writesExecutor = Executors.newSingleThreadExecutor();
 
-    public GamesRepositoryNonBlocking(GamesRepository gamesRepo) {
+    public GamesRepositoryProcessor(GamesRepository gamesRepo) {
         this.gamesRepo = gamesRepo;
     }
 

@@ -1,7 +1,7 @@
 package pl.setblack.pongi.scores;
 
 import javaslang.control.Option;
-import pl.setblack.pongi.scores.repo.ScoresRepositoryNonBlocking;
+import pl.setblack.pongi.scores.repo.ScoresRepositoryProcessor;
 import ratpack.exec.Promise;
 import ratpack.func.Action;
 import ratpack.handling.Chain;
@@ -14,9 +14,9 @@ import ratpack.jackson.Jackson;
  */
 public class ScoresService {
 
-    private final ScoresRepositoryNonBlocking nonBlockingRepo;
+    private final ScoresRepositoryProcessor nonBlockingRepo;
 
-    public ScoresService(ScoresRepositoryNonBlocking nonBlockingRepo) {
+    public ScoresService(ScoresRepositoryProcessor nonBlockingRepo) {
         this.nonBlockingRepo = nonBlockingRepo;
     }
 

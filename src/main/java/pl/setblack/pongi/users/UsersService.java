@@ -4,9 +4,8 @@ import javaslang.control.Option;
 import pl.setblack.pongi.users.api.LoginData;
 import pl.setblack.pongi.users.api.NewUser;
 import pl.setblack.pongi.users.repo.SessionsRepo;
-import pl.setblack.pongi.users.repo.UsersRepoES;
 import pl.setblack.pongi.users.repo.UsersRepository;
-import pl.setblack.pongi.users.repo.UsersRepositoryNonBlocking;
+import pl.setblack.pongi.users.repo.UsersRepositoryProcessor;
 import ratpack.exec.Promise;
 import ratpack.func.Action;
 import ratpack.handling.Chain;
@@ -18,12 +17,12 @@ import ratpack.jackson.Jackson;
  */
 public class UsersService {
 
-    private final UsersRepositoryNonBlocking usersRepo;
+    private final UsersRepositoryProcessor usersRepo;
 
     private final SessionsRepo sessionsRepo;
 
     public UsersService(UsersRepository usersRepo, SessionsRepo sessionsRepo) {
-        this.usersRepo = new UsersRepositoryNonBlocking(usersRepo);
+        this.usersRepo = new UsersRepositoryProcessor(usersRepo);
         this.sessionsRepo = sessionsRepo;
     }
 

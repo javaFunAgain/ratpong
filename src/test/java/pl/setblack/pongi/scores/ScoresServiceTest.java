@@ -6,10 +6,11 @@ import javaslang.Tuple3;
 import javaslang.collection.List;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import pl.setblack.pongi.JSONMapping;
 import pl.setblack.pongi.Server;
 import pl.setblack.pongi.scores.repo.ScoresRepository;
 import pl.setblack.pongi.scores.repo.ScoresRepositoryInMem;
-import pl.setblack.pongi.scores.repo.ScoresRepositoryNonBlocking;
+import pl.setblack.pongi.scores.repo.ScoresRepositoryProcessor;
 
 import ratpack.http.client.ReceivedResponse;
 import ratpack.test.embed.EmbeddedApp;
@@ -65,7 +66,7 @@ class ScoresServiceTest {
     private void testGivenCase(Tuple3<String, Integer, List<ScoreRecord>> testCase) {
         try {
             final ScoresRepository repository = new ScoresRepositoryInMem();
-            ScoresRepositoryNonBlocking nonBlockingWrapper = new ScoresRepositoryNonBlocking(repository);
+            ScoresRepositoryProcessor nonBlockingWrapper = new ScoresRepositoryProcessor(repository);
             final ScoresService testedService = new ScoresService(nonBlockingWrapper);
             repository.registerScore(testCase._3);
             EmbeddedApp.fromServer(
@@ -86,7 +87,7 @@ class ScoresServiceTest {
 
     private static List<UserScore> parseScores(String jsonString)
             throws IOException {
-        return Server.configureJacksonMapping().readValue(jsonString, new TypeReference<List<UserScore>>() {
+        return JSONMapping.getJsonMapping().readValue(jsonString, new TypeReference<List<UserScore>>() {
         });
     }
 
