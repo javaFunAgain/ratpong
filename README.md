@@ -9,7 +9,7 @@ For client code go to : https://github.com/jarekratajski/scalajspounk
 
 # Runing?
 Just call ```gradle run ```
-And the navigate to localhost:9000
+And the navigate to http://localhost:9000
 
 
 # Purpose
