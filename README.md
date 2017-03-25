@@ -1,68 +1,86 @@
 # ratpong
-
-
 This is sample implementation of classic game PONG. Or more precisely REST server that
-support internet play in PONG.
+support network play in classic PONG game.
 
 For client code go to : https://github.com/jarekratajski/scalajspounk
 
 
 # Runing?
 Just call ```gradle run ```
-And the navigate to http://localhost:9000
+Navigate to http://localhost:9000
+
+As a user you can register with user and password.
+After that you can login.
+You can create new game and enter game... 
+once another player joins it.  
+You may open second browser window and register second player.
+
+Controls: 
+ - Q move paddle up,
+ - A move paddle down,
 
 
 # Purpose
 The goal of this project is  to prepare clean Java example of non blocking server architecture.
-System uses as little mutability as possible, does not depend on huge frameworks etc.
-Code should be concise (as for java standards).
+System uses as little mutability as possible, no magic framoworks, application servers
+ and simply starts with main method ( as Fat Jar).
 
 For a moment system uses such technologies:
-- Ratpack providing  REST server library,
-- JavaSlang for immutable data structures,
-- Airomem(prevayler) for simple persistence
+- [Ratpack](https://ratpack.io/) providing  REST server library,
+- [JavaSlang](http://www.javaslang.io/) for immutable data structures,
+- Airomem / prevayler for simple persistence
 - Junit5 for simple tests,
-
 
  
  
 Notice that system does not use any special dependency injection frameworks or containers.
-It is 2017 and we do not need it.
+It is 2017 and we do not need it :smile:.
 
-# Legal
-Pleas bear in mind that PONG is a registered trademark that belongs to Atari Corporation.
+# Legal issue
+Please,  bear in mind that PONG is a registered trademark that belongs to Atari Corporation.
 This source code is created only for educational purposes and you may use it according to provided license.
 
-# TODO
-- Use JOOQ for simple SQL persistence,
-- better exception handling and diagnostics,
+ # Architecture
+ System is divided in 3 main modules. 
+ - [users](https://github.com/javaFunAgain/ratpong/tree/master/src/main/java/pl/setblack/pongi/users) - user registration and login/session logic 
+ - [games](https://github.com/javaFunAgain/ratpong/tree/master/src/main/java/pl/setblack/pongi/games) - created games list, states of games 
+ - [scores](https://github.com/javaFunAgain/ratpong/tree/master/src/main/java/pl/setblack/pongi/users) - registered scores
  
+Typical module consists of:
+  - [service class](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/UsersService.java) - which defines REST methods
+  -[api package](https://github.com/javaFunAgain/ratpong/tree/master/src/main/java/pl/setblack/pongi/users/api) that defines JSON structures for client and server
+  - [module class](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/UsersModule.java) - which contains configuration
+  - [repositories](https://github.com/javaFunAgain/ratpong/tree/master/src/main/java/pl/setblack/pongi/users/repo) various repositiores implementations
  
- # Conecepts
- ## Dependency injection
- We do not use any dependency injection container. First it is not needed, second it is 2017.
- Once we use modern Web Server such as Ratpack we do not have any technical problems (we fully control creation of
- our objects) that happen with Servlet architecture that make use of dependency injection by container handy.
-
-CDI is a smell.
-
-But we have dependency injection working - just done the easy way with constructor. (Notice that if you follow 
-Oliver Gierke advice http://olivergierke.de/2013/11/why-field-injection-is-evil/  you get same code...)
+# Concepts
+ 
+## Dependency injection
+We do not use any dependency injection container. For it is 2017.
+Once we use modern web server such as Ratpack we do not have technical limitations  that happen with Servlet architecture that make use of dependency injection by container handy.
+We are in full control of our objects createion and we can use this power.
 
 
-Check for instance ScoresService class. It has one dependency ScoresRepositoryProcessor which
-allows us to inject different persistence engine if needed (or for tests). ScoresRepositoryProcessot has indeed further
-dependency.
+But we have dependency injection working - just done the easy way: with constructor. (Notice that if you follow 
+Oliver Gierke advice http://olivergierke.de/2013/11/why-field-injection-is-evil/  you get almost same code...)
+
+
+Check for instance [ScoresService](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/scores/ScoresService.java) class. 
+It has one dependency ScoresRepositoryProcessor which
+allows us to inject different persistence engine if needed (or for tests). 
+```
+     public ScoresService(ScoresRepositoryProcessor nonBlockingRepo) {
+        this.nonBlockingRepo = nonBlockingRepo;
+    }
+```
+Btw.: ScoresRepositoryProcessor has indeed further dependencies.
 
 In order to not get lost in "new" hell we simply create a factory which handles some modules defaults.
-Sees ScoresModule. This is exactly one place where we decide explicitly what is our default persistence etc.
-This is more or less same as You define in Spring-beans.xml or with @Component annotations. This time however
+See [ScoresModule](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/scores/ScoresModule.java). This is exactly one place where we decide explicitly what is our default persistence etc.
+This code is more or less same as you would define in Spring-beans.xml or with @Component annotations. This time however
 fully type safe, debuggable, testable. And without magic.
-
 
 See the same concept working with more complicated classes as GamesService.
 More dependencies  - still no problem to control all of them.
-
  
  ## Service 
  
