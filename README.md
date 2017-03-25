@@ -1,9 +1,7 @@
 # ratpong
-This is sample implementation of classic game PONG. Or more precisely REST server that
-support network play in classic PONG game.
+This is POUNK game server implementation which is  network version of a classic PONG. 
 
 For client code go to : https://github.com/jarekratajski/scalajspounk
-
 
 # Runing?
 Just call ```gradle run ```
@@ -22,7 +20,7 @@ Controls:
 
 # Purpose
 The goal of this project is  to prepare clean Java example of non blocking server architecture.
-System uses as little mutability as possible, no magic framoworks, application servers
+System uses as little mutability as possible, no magic frameworks, application servers
  and simply starts with main method ( as Fat Jar).
 
 For a moment system uses such technologies:
@@ -37,7 +35,7 @@ Notice that system does not use any special dependency injection frameworks or c
 It is 2017 -  we do not need it anymore! :smile:
 
 # Legal issue
-Please,  bear in mind that PONG is a registered trademark that belongs to Atari Corporation.
+Please,  bear in mind that PONG is a registered trademark that probably  belongs to [Atari SA](https://en.wikipedia.org/wiki/Atari,_SA).
 This source code is created only for educational purposes and you may use it according to provided license.
 
  # Architecture
@@ -110,7 +108,7 @@ More dependencies? No problem to control  them all. :beers:
 
 ```
 
-Then we write  real addUser implementation:
+Then we write  real **addUser** implementation:
 ```
 
 private Handler addUser() {
@@ -127,14 +125,15 @@ private Handler addUser() {
         };
 
 ```
- See how simple is to convert JSON from input (ctx.parse) and then our result 
-  to output JSON (Jackson::json).
+ See how simple is to convert JSON from input (**ctx.parse**) and then our result 
+  to output JSON (**Jackson::json**).
   
  ### Promises
- One thing that may look unfamiliar in the code above is this Promise.
- Basically Ratpack is a non blocking server. What does it mean:
- we should not block processing of request calling IO. 
+ One thing that may look unfamiliar in the code above is this **Promise** thing. :confused:
+ Ratpack is a non blocking server. What does it mean:
+ we should not block processing of request (by calling and waiting for IO ). 
  So if we ask the database and then wait for result we are generally destroying the whole concept of non blocking architecture.
+ :boom:
  
  So how to work with that? 
  
@@ -142,7 +141,7 @@ private Handler addUser() {
  Instead of just doing  the blocking thing we return Promise object that will be completed somewhere in the future.
  Possibly when result from our database is read.
  Ratpack makes life easy here providing handy implementation of Promise.
- ctx.render accepts generally a String in case we know how to answer  or, a Promise which will be resolved somewhere in the future 
+ ctx.render accepts generally a String in case we know how to answer  or  a Promise which will be resolved somewhere in the future 
  (which is more likely).
  
  So what is this? 
@@ -152,53 +151,53 @@ private Handler addUser() {
                                  ));
 
 ```
- This is in fact conversion between JAVA  promise called CompletableFuture and Ratpack Promise. (Ratpack was created before CompletableFuture  was defined in Java API).
+ This is in fact conversion between JAVA  promise called **CompletableFuture** and Ratpack **Promise**. (Ratpack was created before CompletableFuture  was defined in Java API).
  Btw. this operation can be easily extracted. (TODO)
  
- So we know how to render Promise (or CompletableFuture) - but how to get it?
+ So: we know how to render Promise (or CompletableFuture) - but how to get it?
  
- Here comes to help class called UserRepositoryProcessor the responsibility of this class is to
+ Here comes to help class called [UserRepositoryProcessor](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/repo/UsersRepositoryProcessor.java). The responsibility of this class is to
  cooperate with some blocking persistence engine and delegate processing to other threads so that the request processing thread is not blocked.
   
-You may wonder what sens it makes - we are not blocking the request thread but instead we block some other thread... where is the gain?
-Good point. If we had some kind of nonblocking DB such as Cassandra or even MongoDB we could leverage that in be truly non bloicking.
-But what if not. In fact nothing wrong happens  it is possible to use Blocking IO with non blocking server and still get some gain.
-What we can win is the control of our threads. Imagine 5000 users trying to get access to our page simultaneously.
-In a classical architecture it would mean 5000 threads are created, all of them making connection to database, waiting for answer, holding memory.  This does not sound good. 
-Try to fill what does it mean to your database. have you ever tried to copy large folder with lot of smile files to your USB storage? Did it help if you started to 
-copy 3 such folders at the same time to one unlucky USB?  So something you have probably learned with windows is to *Queue* such operations.   
+You may wonder: *what sense does  it make?* - we are not blocking the request thread but instead we block some other thread... where is the point?
+Good point. If we had some kind of nonblocking DB such as Cassandra or even MongoDB we could leverage that in be truly non blocking way.
+But we do not have. Still nothing wrong happens! It is possible to use Blocking IO with non blocking server and still get some gain.
+What we can win is the control of our threads! Imagine 5000 users trying to get access to our page simultaneously.
+In a classical (blocking) architecture it would mean 5000 threads are created, all of them making connection to database, waiting for answer, holding memory.  This does not sound good. 
+Try to fell what does it mean to your database. Have you ever tried to copy large folder with lot of small files to your USB storage? Did it help if you started to 
+copy 3 such folders at the same time to that one unlucky USB?  So something you have probably learned with windows is to *Queue* such operations.   
 You will start copying second folder once the first one is finished.
      
  This is exactly what can be done with blocking DB. We can limit how many concurrent queries  (or generally operations) we do and
- simply Queue all the rest. This is what "Processor" class does. 
- it uses very nice tool from JRE called Executor. We create executor and tell how many threads should it use (lets say one!). Then we simply 
-     queue operations with 
+ simply queue all the rest. This is what "Processor" class does. 
+ It uses very nice tool from Java classes called [Executor](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html). We create executor and tell how many threads should it use (lets say one!). Then we simply 
+     queue operations with it: 
      
      ```
      writesExecutor.execute( ()-> {
                  result.complete(this.usersRepository.addUser(login, pass));
              });
     ```         
- Notice that executor operation returns CompletableFuture - and this is exactly what we need.       
-     Notice also that this is called writesExecutor because we are only doing so with writes.
-     Read operations are called instantly.... why?
-     This is because in that case we have (almost) non blocking datasource (pervayler./ airomem) which is performing reads without blocking.
-     (This is however not the case of writes). If we worked with SQL database such as Oracle we would have to queu both reads and writes.
+ See? That executor operation returns **CompletableFuture** - and this is exactly what we need.       
+Notice also that this is called writesExecutor because we are only doing so with writes.
+Read operations are called instantly.... why?
+This is because in that case we have (almost) non blocking datasource (pervayler./ airomem) which is performing reads without blocking.
+(Which is however not the case when it comes to writes). If we worked with SQL database such as Oracle we would have to queue both reads and writes.
      
-  
  
  
  
  ## Persistence
  So maybe it is good moment to introduce persistence.
- Our first persistence mechanism is Airomem (which is basically Prevayler.)
- To read about it please go to : 
+ Our first persistence mechanism is [Airomem](https://github.com/airomem) (which is basically only Java 8 wrapper for [Prevayler](http://prevayler.org/).)
+ To read more about it please go to  [Prevayler  page](http://prevayler.org/) 
  Or watch one of my presentations.
  
- To simplify a little bit Airomem is a peristence that you have dreamed about - You just store your objects in some 
- Java object (maps, lists, whatever) and they magically stored in background.
- So we simply design a system as if there was no persistence and everything we want we store in RAM.
- This is exactly what the class UserRepositoryInMemory does.
+ Here it is enough to say taht Airomem is a persistence that you have dreamed about - you just store your objects as 
+ Java objects (maps, lists, whatever) and they are magically stored in the background.
+ 
+ We simply design a system as if there was no persistence and everything we want is in in RAM (in fact it is).
+ This is exactly what the class [UserRepositoryInMemory](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/repo/UsersRepositoryInMemory.java) does.
  ```
  public class UsersRepositoryInMemory implements UsersRepository, Serializable {
      private static final long serialVersionUID = 1L;
@@ -207,14 +206,18 @@ You will start copying second folder once the first one is finished.
  
 
  ```
-See HashMap there ? It is exactly our database :-). And no worry - even if you restart, or kill program the data will be persisted.
- That is no magic. That is how prevayler works.
+See **HashMap** there ? It is exactly our database :-). And no worry - even if you restart, or kill program the data will be persisted.
+That is no magic. That is how *Prevayler* (Prevalence) works.
+
+Ok I lied to you. We need to do one more step. We have to wrap our repo in some
+other class. See [UserRepoES](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/repo/UsersRepoES.java).
+As you can find out it only delegates all operations to our InMemoryRepo - 
+but this do the trick.
  
  ## Testing
- 
- You've probably seen lot of tests with Mockito. Maybe you believe that testing with mocks is exactly what You would want. In fact it is the opposite:
+  You've probably seen lot of tests with Mockito. Maybe you believe that testing with mocks is exactly what You would want. In fact it is the opposite:
  the more you mock the more probable that you only test Mockito. And even if you do it perfectly with verify etc. it is still not good because there is a big possibility after such testsw 1 to 1 cover your implementation. 
- ANd there comes the problem - try to do refactoring .... you have to rewrite your tests. Is that what youy've wanted.
+ And there comes the problem - try to do refactoring .... you have to rewrite your tests. Is that what youy've wanted.
  
  So the lesson from many projects is tests functionality and try to to them little black box( at east gray :-)). You can check some internals but do not be to eager.
  
