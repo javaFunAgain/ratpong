@@ -1,6 +1,9 @@
 package pl.setblack.pongi.users;
 
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import pl.setblack.pongi.Server;
 import pl.setblack.pongi.users.repo.SessionsRepo;
 import pl.setblack.pongi.users.repo.UsersRepositoryInMemory;
@@ -11,6 +14,8 @@ import java.time.Instant;
 import java.time.ZoneId;
 
 
+
+
 class UsersServiceTest {
     private final Clock clock = Clock.fixed(Instant.parse("2007-12-03T10:15:30.00Z"), ZoneId.of("GMT"));
 
@@ -19,13 +24,14 @@ class UsersServiceTest {
     public void shouldRegisterUser() throws Exception {
        prepareServer().test(
                 testHttpClient -> {
-                    final Object response = testHttpClient.requestSpec(rs ->
+                    final String response = testHttpClient.requestSpec(rs ->
                             rs.headers( mh -> mh.add("Content-type", "application/json"))
                             .body( body -> body.text("{\"password\": \"upa\"}")))
                             .post("/api/users/aa")
                             .getBody().getText();
 
-                    System.out.println(response);
+                    assertEquals("{\"problem\":null,\"ok\":true}", response);
+
                 }
         );
     }
