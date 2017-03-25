@@ -73,26 +73,25 @@ allows us to inject different persistence engine if needed (or for tests).
         this.nonBlockingRepo = nonBlockingRepo;
     }
 ```
-Btw.: ScoresRepositoryProcessor has indeed further dependencies.
+Btw.: ScoresRepositoryProcessor has indeed further dependencies... (but this is not the problem).
 
 In order to not get lost in "new" hell we simply create a factory which handles some modules defaults.
 See [ScoresModule](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/scores/ScoresModule.java). This is exactly one place where we decide explicitly what is our default persistence etc.
-This code is more or less same as you would define in Spring-beans.xml or with @Component annotations. This time however
+This code is more or less same as you would define in spring-beans.xml or with **@Component** annotations. This time however
 fully type safe, debuggable, testable. And without magic.
 
-See the same concept working with more complicated classes as GamesService.
-More dependencies  - still no problem to control all of them.
+See the same concept working with more complicated classes as [GamesService/GameModule](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/games/GamesModule.java)
+More dependencies? No problem to control  them all. :beers:
  
  ## Service 
- 
- Notice how simple it is to define new REST api.
+  It is easy to define REST api.
  Lets talk about Users.
  We will have 2 operations there.
- POST /users/USER_ID   -register new user  by POSTing data (password)
- POST /sessions/USER_ID - login user by posting password (it is POST because we create session)
+ **POST /users/USER_ID**   -register new user  by POSTing data (password)
+ **POST /sessions/USER_ID** - login user by posting password (it is POST because we create session)
  
- So there is usersApi method in UsersService which basically defines how to handle both operations.
- See how easy we do it with lambdas:
+ So there is usersApi method in [UsersService](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/UsersService.java) which basically defines how to handle both operations.
+ See how easy we do it with lambdas: :sunglasses:
  
  ```
  
@@ -111,7 +110,7 @@ More dependencies  - still no problem to control all of them.
 
 ```
 
-Then real addUser operation is just what we want to write:
+Then we write  real addUser implementation:
 ```
 
 private Handler addUser() {
