@@ -34,7 +34,7 @@ For a moment system uses such technologies:
  
  
 Notice that system does not use any special dependency injection frameworks or containers.
-It is 2017 and we do not need it :smile:.
+It is 2017 -  we do not need it anymore! :smile:
 
 # Legal issue
 Please,  bear in mind that PONG is a registered trademark that belongs to Atari Corporation.
@@ -50,18 +50,19 @@ Typical module consists of:
   - [service class](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/UsersService.java) - which defines REST methods
   -[api package](https://github.com/javaFunAgain/ratpong/tree/master/src/main/java/pl/setblack/pongi/users/api) that defines JSON structures for client and server
   - [module class](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/UsersModule.java) - which contains configuration
-  - [repositories](https://github.com/javaFunAgain/ratpong/tree/master/src/main/java/pl/setblack/pongi/users/repo) various repositiores implementations
+  - [repositories](https://github.com/javaFunAgain/ratpong/tree/master/src/main/java/pl/setblack/pongi/users/repo) - various repositories implementations
  
 # Concepts
  
 ## Dependency injection
 We do not use any dependency injection container. For it is 2017.
 Once we use modern web server such as Ratpack we do not have technical limitations  that happen with Servlet architecture that make use of dependency injection by container handy.
-We are in full control of our objects createion and we can use this power.
+We are in full control of our objects creation and we can use this power.
+:metal:
 
 
-But we have dependency injection working - just done the easy way: with constructor. (Notice that if you follow 
-Oliver Gierke advice http://olivergierke.de/2013/11/why-field-injection-is-evil/  you get almost same code...)
+But we have *dependency injection* working - just done the easy way: with constructor. (Notice that if you follow 
+Oliver Gierke advice [field injection evil](http://olivergierke.de/2013/11/why-field-injection-is-evil/)  you get almost same code...)
 
 
 Check for instance [ScoresService](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/scores/ScoresService.java) class. 
