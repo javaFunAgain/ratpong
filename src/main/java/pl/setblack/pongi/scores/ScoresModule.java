@@ -3,6 +3,7 @@ package pl.setblack.pongi.scores;
 import pl.setblack.pongi.scores.repo.ScoreRepositoryES;
 import pl.setblack.pongi.scores.repo.ScoresRepository;
 import pl.setblack.pongi.scores.repo.ScoresRepositoryProcessor;
+import pl.setblack.pongi.scores.repo.ScoresRepositorySQL;
 
 /**
  * Created by jarek on 2/13/17.
@@ -16,7 +17,7 @@ public class ScoresModule {
     }
 
     public ScoresModule() {
-        this ( new ScoreRepositoryES());
+        this ( new ScoresRepositorySQL());
     }
 
     public ScoresService createService() {
