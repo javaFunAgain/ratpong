@@ -193,7 +193,7 @@ This is because in that case we have (almost) non blocking datasource (pervayler
  To read more about it please go to  [Prevayler  page](http://prevayler.org/) 
  Or watch one of my presentations.
  
- Here it is enough to say taht Airomem is a persistence that you have dreamed about - you just store your objects as 
+ Here it is enough to say that Airomem is a persistence that you have dreamed about - you just store your objects as 
  Java objects (maps, lists, whatever) and they are magically stored in the background.
  
  We simply design a system as if there was no persistence and everything we want is in in RAM (in fact it is).
@@ -209,27 +209,23 @@ This is because in that case we have (almost) non blocking datasource (pervayler
 See **HashMap** there ? It is exactly our database :-). And no worry - even if you restart, or kill program the data will be persisted.
 That is no magic. That is how *Prevayler* (Prevalence) works.
 
-Ok I lied to you. We need to do one more step. We have to wrap our repo in some
+OK. I lied a little to you. :smiling_imp: We need to do one more step. We have to wrap our repo in some
 other class. See [UserRepoES](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/repo/UsersRepoES.java).
 As you can find out it only delegates all operations to our InMemoryRepo - 
 but this do the trick.
  
  ## Testing
-  You've probably seen lot of tests with Mockito. Maybe you believe that testing with mocks is exactly what You would want. In fact it is the opposite:
- the more you mock the more probable that you only test Mockito. And even if you do it perfectly with verify etc. it is still not good because there is a big possibility after such testsw 1 to 1 cover your implementation. 
- And there comes the problem - try to do refactoring .... you have to rewrite your tests. Is that what youy've wanted.
- 
- So the lesson from many projects is tests functionality and try to to them little black box( at east gray :-)). You can check some internals but do not be to eager.
  
 Testing Ratpack contrary to lot of container is just awesome. Imagine that you test your HTTP web services just with HTTP.
 You create request, add some headers (if needed) and then you do real cal with HTTP!.
-How cool - you can indeed  rely on such tests.
+How cool - you can indeed  rely on such tests!
 
-But isn't it slow then? ... what if I tell you that starting ratpack with services takes sth like 16 ms on an average PC...
+But isn't it slow then? ... what if I tell you that starting Ratpack with services takes sth like 16 ms on an average PC...
 This means in one second You can start 50 times your server (how great!).
-But isn''t then problem with database - such server would use real Database (or whatever persistence you use).  
-Not really because we've used dependency injection.
-See UsersServiceTest 
+But isn't then problem with database - such server would use real database (or whatever persistence you use).  
+Not really because we've used **dependency injection**.
+
+See [UsersServiceTest](https://github.com/javaFunAgain/ratpong/blob/master/src/test/java/pl/setblack/pongi/users/UsersServiceTest.java) 
 we create there in memory Repository (for tests) and then start Ratpack with usersService passing 
  In memory repository as an implementation..
 ```
@@ -238,13 +234,13 @@ we create there in memory Repository (for tests) and then start Ratpack with use
     public void shouldRegisterUser() throws Exception {
        prepareServer().test(
                 testHttpClient -> {
-                    final Object response = testHttpClient.requestSpec(rs ->
+                    final String response = testHttpClient.requestSpec(rs ->
                             rs.headers( mh -> mh.add("Content-type", "application/json"))
                             .body( body -> body.text("{\"password\": \"upa\"}")))
                             .post("/api/users/aa")
                             .getBody().getText();
-
-                    System.out.println(response);
+ 
+                        ...                  
                 }
         );
     }
