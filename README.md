@@ -212,12 +212,12 @@ That is no magic. That is how *Prevayler* (Prevalence) works.
 OK. I lied a little to you. :smiling_imp: We need to do one more step. We have to wrap our repo in some
 other class. See [UserRepoES](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/repo/UsersRepoES.java).
 As you can find out it only delegates all operations to our InMemoryRepo - 
-but this do the trick.
+but this does the trick.
  
  ## Testing
  
 Testing Ratpack contrary to lot of container is just awesome. Imagine that you test your HTTP web services just with HTTP.
-You create request, add some headers (if needed) and then you do real cal with HTTP!.
+You create request, add some headers (if needed) and then you do real call with HTTP!.
 How cool - you can indeed  rely on such tests!
 
 But isn't it slow then? ... what if I tell you that starting Ratpack with services takes sth like 16 ms on an average PC...
@@ -254,7 +254,6 @@ we create there in memory Repository (for tests) and then start Ratpack with use
 
 ```
 
- 
  
  ## Immutability
  

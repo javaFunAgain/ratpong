@@ -58,7 +58,7 @@ public class GameState implements Serializable {
         return  new Paddle(x, 0.5f);
     }
 
-    public GameState start(long startTime, final Random rnd) {
+    private GameState start(long startTime, final Random rnd) {
 
         return new GameState(
                 Ball.random(rnd),

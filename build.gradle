@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M3'
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4'
     }
 }
 
@@ -18,7 +18,7 @@ apply plugin: 'application'
 
 
 sourceCompatibility = 1.8
-ext.junitJupiterVersion  = '5.0.0-M3'
+ext.junitJupiterVersion  = '5.0.0-M4'
 
 compileJava {
     options.compilerArgs << '-parameters'
@@ -34,7 +34,7 @@ dependencies {
     compile group: 'io.ratpack', name: 'ratpack-core', version: '1.4.4'
     compile group: 'pl.setblack', name: 'badass', version: '1.0'
     compile 'com.google.code.findbugs:jsr305:3.0.1'
-    compile 'pl.setblack:airomem-core:1.1.0'
+    compile 'pl.setblack:airomem-core:1.1.1'
     compile 'io.javaslang:javaslang:2.1.0-alpha'
     compile 'io.javaslang:javaslang-jackson:2.1.0-alpha'
     compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.0.5'

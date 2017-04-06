@@ -23,7 +23,7 @@ class UsersRepositoryTest extends  UserRepositoryBase{
 
 }
 
-class UserPersistentRepoText extends UserRepositoryBase {
+class UserPersistentRepoTest extends UserRepositoryBase {
     private final Path testRepoPath = Paths.get("target/airomem/test");
     private UsersRepoES persistentRepo;
     @BeforeEach
