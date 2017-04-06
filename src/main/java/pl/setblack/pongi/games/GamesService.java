@@ -77,7 +77,7 @@ public class GamesService {
             final String gameId = ctx.getPathTokens().get("id");
             ctx.getRequest().getBody().then(body -> {
                 final float targetY = Float.parseFloat(body.getText());
-                renderAsync(ctx, session -> gamesRepo.movePaddle(gameId, session.userId, targetY));
+                renderSecure(ctx, session -> gamesRepo.movePaddle(gameId, session.userId, targetY));
             });
         };
     }
@@ -108,7 +108,7 @@ public class GamesService {
         return () ->
                 ctx.getRequest().getBody().then(gameName -> {
                     final UUID uuid = UUID.randomUUID();
-                    renderAsync(
+                    renderSecure(
                             ctx,
                             sess -> gamesRepo
                                     .createGame(uuid.toString(), gameName.getText(), sess.userId));
@@ -119,7 +119,7 @@ public class GamesService {
     private Handler joinGame() {
         return ctx -> {
             final String gameUUID = ctx.getPathTokens().get("id");
-            renderAsync(
+            renderSecure(
                     ctx,
                     sess -> {
                         final CompletionStage<Option<GameState>> state = gamesRepo
@@ -185,11 +185,11 @@ public class GamesService {
     }
 
     private Block listGames(Context ctx) {
-        return () -> renderAsync(ctx, (any) -> gamesRepo.listGames());
+        return () -> renderSecure(ctx, (any) -> gamesRepo.listGames());
     }
 
-    private <T> void renderAsync(Context ctx,
-                                 Function<Session, CompletionStage<T>> async
+    private <T> void renderSecure(Context ctx,
+                                  Function<Session, CompletionStage<T>> async
     ) {
         String bearer = ctx.getRequest().getHeaders().get("Authorization");
         final String sessionId = bearer.replace("Bearer ", "");

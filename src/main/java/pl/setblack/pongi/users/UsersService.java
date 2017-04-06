@@ -1,6 +1,7 @@
 package pl.setblack.pongi.users;
 
 import javaslang.control.Option;
+import pl.setblack.pongi.JSONMapping;
 import pl.setblack.pongi.users.api.LoginData;
 import pl.setblack.pongi.users.api.NewUser;
 import pl.setblack.pongi.users.repo.SessionsRepo;
@@ -49,10 +50,7 @@ public class UsersService {
             final String userId = ctx.getPathTokens().get("id");
             ctx.parse(NewUser.class).then(
                     newUser -> {
-                        final Promise result = Promise.async(
-                                d -> d.accept(usersRepo.addUser(userId, newUser.password).thenApply(Jackson::json)
-                                ));
-                        ctx.render(result);
+                        ctx.render(JSONMapping.toJSONPromise(usersRepo.addUser(userId, newUser.password)));
                     }
             );
         };

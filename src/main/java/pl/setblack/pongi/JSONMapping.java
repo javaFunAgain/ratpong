@@ -5,6 +5,11 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import javaslang.jackson.datatype.JavaslangModule;
+import ratpack.exec.Promise;
+import ratpack.jackson.Jackson;
+import ratpack.jackson.JsonRender;
+
+import java.util.concurrent.CompletionStage;
 
 /**
  * Created by jarek on 3/17/17.
@@ -24,5 +29,11 @@ public class JSONMapping {
 
     public static final ObjectMapper getJsonMapping() {
         return JSONMapping.MAPPER;
+    }
+
+    public   static  Promise<JsonRender> toJSONPromise(CompletionStage<?> future) {
+        return Promise.async(
+                d -> d.accept(future.thenApply(Jackson::json))
+        );
     }
 }
