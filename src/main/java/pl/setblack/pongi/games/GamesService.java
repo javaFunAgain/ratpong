@@ -54,17 +54,21 @@ public class GamesService {
 
     public Action<Chain> define() {
         return chain -> chain
-                .prefix("games", games ->
+                .prefix("game", games ->
                         games.post(":id", joinGame())
-                                .all(
-                                        noGameId ->
-                                                noGameId.
-                                                        byMethod(m -> m
-                                                                .get(listGames(noGameId))
-                                                                .post(createGame(noGameId)))
-                                )
+
 
                 )
+                .prefix("games", games ->
+                        games.all(
+                                noGameId ->
+                                        noGameId.
+                                                byMethod(m -> m
+                                                        .get(listGames(noGameId))
+                                                        .post(createGame(noGameId)))
+                        )
+                )
+
                 //  .prefix("join", joinGame())
                 .prefix("players", moves ->
                         moves.post(":id", movePaddle()))
