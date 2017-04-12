@@ -26,6 +26,7 @@ compileJava {
 
 repositories {
     mavenCentral()
+    maven { url "http://clojars.org/repo" }
 }
 
 mainClassName = "pl.setblack.pongi.Main"
@@ -40,6 +41,7 @@ dependencies {
     compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.0.5'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.6'
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.8.6'
+    compile "org.java-websocket:java-websocket:1.3.2"
 
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")

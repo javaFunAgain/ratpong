@@ -2,6 +2,9 @@ package pl.setblack.pongi.games;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import javaslang.collection.List;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft_10;
+import org.java_websocket.handshake.ServerHandshake;
 import org.junit.jupiter.api.Test;
 import pl.setblack.pongi.JSONMapping;
 import pl.setblack.pongi.Server;
@@ -13,17 +16,24 @@ import pl.setblack.pongi.scores.repo.ScoresRepositoryInMem;
 import pl.setblack.pongi.scores.repo.ScoresRepositoryProcessor;
 import pl.setblack.pongi.users.api.Session;
 import pl.setblack.pongi.users.repo.SessionsRepo;
-import ratpack.http.client.ReceivedResponse;
 import ratpack.test.embed.EmbeddedApp;
 import ratpack.test.http.TestHttpClient;
 
-import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * This is semi integration test.
+ */
 class GamesServiceTest {
 
     private final Clock clock  = Clock.fixed(Instant.parse("2007-12-03T10:15:30.00Z"), ZoneId.of("GMT"));
@@ -59,6 +69,57 @@ class GamesServiceTest {
                     assertTrue(game2.players._2.name.equals("user2"));
                 }
         );
+    }
+
+    @Test
+    public void user2CanStreamGame() throws Exception{
+        prepareServer().test(
+                testHttpClient -> {
+                    final GameInfo game = JSONMapping.getJsonMapping().readerFor(GameInfo.class).readValue(
+                            postHttp(testHttpClient, "/api/games/games", "game1", user1)
+                    );
+                    JSONMapping.getJsonMapping().readerFor(GameState.class).readValue(
+                            postHttp(testHttpClient, "/api/games/game/"+game.uuid, "game1", user2)
+                    );
+
+                    final BlockingQueue<String> messagesQueue = new ArrayBlockingQueue(10);
+
+
+                    createGamesSocket(game, messagesQueue);
+                    final  GameState state = JSONMapping.getJsonMapping().readerFor(GameState.class).readValue(messagesQueue.poll(2, TimeUnit.SECONDS));
+
+                    assertTrue(state.ball.speed.x != 0f);
+
+                }
+        );
+    }
+
+    private void createGamesSocket(GameInfo game, BlockingQueue<String> messagesQueue) throws URISyntaxException {
+        final WebSocketClient mWs = new WebSocketClient( new URI( "ws://localhost:5050/api/games/stream/"+game.uuid ), new Draft_10() )
+        {
+            @Override
+            public void onMessage( String message ) {
+                messagesQueue.offer(message);
+            }
+
+            @Override
+            public void onOpen( ServerHandshake handshake ) {
+
+            }
+
+            @Override
+            public void onClose( int code, String reason, boolean remote ) {
+
+            }
+
+            @Override
+            public void onError( Exception ex ) {
+
+            }
+
+        };
+
+        mWs.connect();
     }
 
     private String postHttp(TestHttpClient testHttpClient, String url, String content, Session session) {
