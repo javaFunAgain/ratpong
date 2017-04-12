@@ -2,18 +2,14 @@ package pl.setblack.pongi.scores.repo;
 
 import javaslang.collection.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
 import pl.setblack.pongi.scores.GameResult;
 import pl.setblack.pongi.scores.ScoreRecord;
 import pl.setblack.pongi.scores.ScoreRules;
-import pl.setblack.pongi.scores.UserScore;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by jarek on 2/5/17.

@@ -83,7 +83,7 @@ public class Server {
     private Action<Chain> defineApi() {
         return apiChain -> apiChain
                 .insert(usersService.usersApi())
-                .prefix("games", gamesService.define())
+                .insert(gamesService.gamesApi())
                 .prefix("score", scoresService.scores());
     }
 

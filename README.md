@@ -256,6 +256,29 @@ we create there in memory Repository (for tests) and then start Ratpack with use
 
  
  ## Immutability
+ In this project almost every class is immutable. It means for instance that the state of the game
+ (see class GameState) is an immutable class. Every time player moves 
+ or ball moves there is in fact new state (new instance) of  the game created.
+ 
+ This makes testing and reasoning about code way easier.
+ There is an @Immutable annotation used to document such classes.
+ 
+ There are few classes that are mutable. Generally databases are mutable.
+ So the classes that keep data state like GameRepositoryInMemory contain mutable
+ fields. See however that still they use Immutable collections in order to limit number of places
+ where mutability happens and make it more explicit in code.
+ 
+ For example it uses ```javaslang.collection.HashMap``` to store game states (allGamesState).
+ It means where new gamestate is  updated it is clearly visible in code:
+ ```
+      final GameState newState= game.push(this.clock.millis(), this.random);
+            this.allGamesState = this.allGamesState.put(gameUUID, newState);
+```
+
+ 
+ Second place where mutability can be found is for technical reasons in non  business code
+ like handling of websockets (the collection of all sockets is  mutable).
+ 
  
  
  ## WebSockets

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Flowable;
 import javaslang.collection.List;
 import javaslang.control.Option;
+import pl.setblack.pongi.JSONMapping;
 import pl.setblack.pongi.games.api.GamePhase;
 import pl.setblack.pongi.games.api.GameState;
 import pl.setblack.pongi.games.api.Player;
@@ -40,6 +41,7 @@ public class GamesService {
     private final ScoresRepositoryProcessor scoresRepo;
 
 
+
     private final ConcurrentHashMap<String, Flowable<GameState>> gamesFlow = new ConcurrentHashMap<>();
 
     public GamesService(
@@ -52,7 +54,12 @@ public class GamesService {
 
     }
 
-    public Action<Chain> define() {
+    public Action<Chain> gamesApi() {
+        return apiChain -> apiChain
+                .prefix("games", define());
+    }
+
+    private Action<Chain> define() {
         return chain -> chain
                 .prefix("game", games ->
                         games.post(":id", joinGame())
@@ -69,7 +76,6 @@ public class GamesService {
                         )
                 )
 
-                //  .prefix("join", joinGame())
                 .prefix("players", moves ->
                         moves.post(":id", movePaddle()))
                 .prefix("stream", stream ->
@@ -195,20 +201,14 @@ public class GamesService {
     private <T> void renderSecure(Context ctx,
                                   Function<Session, CompletionStage<T>> async
     ) {
-        String bearer = ctx.getRequest().getHeaders().get("Authorization");
-        final String sessionId = bearer.replace("Bearer ", "");
-        final Option<Session> session = sessionsRepo.getSession(sessionId);
-
-        final Promise<JsonRender> result = Promise.async(d ->
-                d.accept(session.map(
-                        sess -> {
-                            final CompletionStage<JsonRender> future = async.apply(sess).thenApply(Jackson::json);
-                            return future;
-                        })
-                        .getOrElse(
-                                CompletableFuture.completedFuture("unauthorized")
-                                        .thenApply(Jackson::json)))
-        );
-        ctx.render(result);
+        final Option<String> bearer = Option.of(ctx.getRequest().getHeaders().get("Authorization"));
+        final Option<String> sessionId = bearer.map( b->b.replace("Bearer ", ""));
+        final Option<Session> session = sessionId.flatMap(sessionsRepo::getSession);
+        ctx.render(JSONMapping.toJSONPromise( session.map(
+                sess -> (CompletionStage<Object>)async.apply(sess)
+        )
+                .getOrElse(
+                        CompletableFuture.completedFuture("unauthorized")
+                )));
     }
 }
