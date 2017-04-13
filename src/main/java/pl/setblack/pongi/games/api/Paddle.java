@@ -19,11 +19,11 @@ public class Paddle extends GameObject {
         this.targetY = targetY;
     }
 
-    public Paddle(float x, float y) {
+    Paddle(float x, float y) {
         this(x,y,y);
     }
 
-    public Paddle paddleMove(long timeDiff) {
+    Paddle paddleMove(long timeDiff) {
         final float distanceToTarget = targetY - y;
         final float direction = Math.signum(distanceToTarget);
         final float maxMove = timeDiff/ 5000.0f;
@@ -32,11 +32,11 @@ public class Paddle extends GameObject {
         return new Paddle(this.x, newY, targetY);
     }
 
-    public Paddle movingTo(float targetY) {
+    Paddle movingTo(float targetY) {
         return new Paddle(this.x,this.y,targetY);
     }
 
-    public static Paddle createPaddleForPlayer(int playerNr) {
+    static Paddle createPaddleForPlayer(int playerNr) {
         final float x = (float)playerNr -1;
         return  new Paddle(x, 0.5f);
     }

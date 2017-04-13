@@ -21,17 +21,17 @@ public class Player implements Serializable{
         this.paddle = paddle;
     }
 
-    public Player movePaddle(long dist) {
-        return new Player(this.score, this.name, this.paddle.paddleMove(dist));
+    Player movePaddle(long timeDiff) {
+        return new Player(this.score, this.name, this.paddle.paddleMove(timeDiff));
     }
 
-    public Player makeMoving(String userId, float targetY) {
+     Player makeMoving(String userId, float targetY) {
         return (this.name.equals(userId))
                 ? new Player(this.score, this.name, this.paddle.movingTo(targetY))
                 : this;
     }
 
-    public Player score() {
+    Player score() {
         return new Player(this.score+1, name, paddle);
     }
 }
