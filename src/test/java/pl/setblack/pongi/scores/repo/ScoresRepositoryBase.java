@@ -1,7 +1,6 @@
 package pl.setblack.pongi.scores.repo;
 
 import javaslang.collection.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.setblack.pongi.scores.GameResult;
 import pl.setblack.pongi.scores.ScoreRecord;
@@ -11,18 +10,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-/**
- * Created by jarek on 2/5/17.
- */
-class ScoresRepositoryTest {
 
+abstract class ScoresRepositoryBase {
 
-    private ScoresRepository testee;
-
-    @BeforeEach
-    protected void createRepo () {
-        testee =   new ScoresRepositoryInMem();
-    }
+    protected ScoresRepository testee;
 
     @Test
     public void shouldCollectSingleWinUserScore() {

@@ -3,6 +3,7 @@ package pl.setblack.pongi.users.repo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.setblack.pongi.AiromemHelper;
 import pl.setblack.pongi.users.api.RegUserStatus;
 
 
@@ -36,27 +37,14 @@ class UserPersistentRepoTest extends UserRepositoryBase {
     @AfterEach
     public void deleteRepo() throws IOException{
         this.persistentRepo.close();
-        Files.walkFileTree(testRepoPath, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-
-        });
+        AiromemHelper.clearFolder(testRepoPath);
     }
 
 
 
 }
 
-class UserRepositoryBase {
+abstract class UserRepositoryBase {
 
     protected  UsersRepository usersRepository;
 

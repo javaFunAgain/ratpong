@@ -8,6 +8,7 @@ import pl.setblack.pongi.scores.ScoreRecord;
 import pl.setblack.pongi.scores.UserScore;
 import pl.setblack.pongi.users.repo.UsersRepositoryInMemory;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -17,9 +18,9 @@ public class ScoreRepositoryES implements ScoresRepository {
 
     private final Persistent<ScoresRepositoryInMem> perstenceController;
 
-    public ScoreRepositoryES() {
+    public ScoreRepositoryES(Path where) {
         this.perstenceController = Persistent.loadOptional(
-                Paths.get("airomem/score"), ()-> new ScoresRepositoryInMem());
+                where, ()-> new ScoresRepositoryInMem());
     }
 
     @Override
@@ -35,8 +36,11 @@ public class ScoreRepositoryES implements ScoresRepository {
 
     @Override
     public Option<UserScore> getUserScore(String userId) {
-        throw new UnsupportedOperationException();
+         return this.perstenceController.query( scoreRepo -> scoreRepo.getUserScore(userId));
     }
 
+    public void close() {
+        this.perstenceController.close();
+    }
 
 }

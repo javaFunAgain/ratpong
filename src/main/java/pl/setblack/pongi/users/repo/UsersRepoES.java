@@ -14,9 +14,6 @@ public class UsersRepoES implements UsersRepository{
 
     private final Persistent<UsersRepositoryInMemory> controller;
 
-    public UsersRepoES() {
-        this( Paths.get("airomem/usersStore"));
-    }
 
     public UsersRepoES(Path where) {
         controller = Persistent.loadOptional(

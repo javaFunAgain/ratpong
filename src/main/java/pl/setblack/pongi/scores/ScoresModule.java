@@ -4,6 +4,8 @@ import pl.setblack.pongi.scores.repo.ScoreRepositoryES;
 import pl.setblack.pongi.scores.repo.ScoresRepository;
 import pl.setblack.pongi.scores.repo.ScoresRepositoryProcessor;
 
+import java.nio.file.Paths;
+
 /**
  * Created by jarek on 2/13/17.
  */
@@ -16,7 +18,7 @@ public class ScoresModule {
     }
 
     public ScoresModule() {
-        this ( new ScoreRepositoryES());
+        this ( new ScoreRepositoryES(Paths.get("airomem/score")));
     }
 
     public ScoresService createService() {
