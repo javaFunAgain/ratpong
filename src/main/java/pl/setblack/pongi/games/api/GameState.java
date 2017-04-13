@@ -45,18 +45,15 @@ public class GameState implements Serializable {
 
         if (info.players.size() == 2) {
             final Ball ball = new Ball(0.5f, 0.5f);
-            final Player player1 = new Player(0, info.players.get(0), createPaddle(1));
-            final Player player2 = new Player(0, info.players.get(1), createPaddle(2));
+            final Player player1 = new Player(0, info.players.get(0), Paddle.createPaddleForPlayer(1));
+            final Player player2 = new Player(0, info.players.get(1), Paddle.createPaddleForPlayer(2));
             return Option.some(new GameState(ball, Tuple.of(player1, player2), startTime).start(startTime, rnd));
         } else {
             return Option.none();
         }
     }
 
-    private static Paddle createPaddle(int playerNr) {
-        final float x = (float)playerNr -1;
-        return  new Paddle(x, 0.5f);
-    }
+
 
     private GameState start(long startTime, final Random rnd) {
 

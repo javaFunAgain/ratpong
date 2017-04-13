@@ -35,4 +35,9 @@ public class Paddle extends GameObject {
     public Paddle movingTo(float targetY) {
         return new Paddle(this.x,this.y,targetY);
     }
+
+    public static Paddle createPaddleForPlayer(int playerNr) {
+        final float x = (float)playerNr -1;
+        return  new Paddle(x, 0.5f);
+    }
 }

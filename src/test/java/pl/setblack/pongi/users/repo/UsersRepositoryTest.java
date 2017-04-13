@@ -6,10 +6,9 @@ import org.junit.jupiter.api.Test;
 import pl.setblack.pongi.AiromemHelper;
 import pl.setblack.pongi.users.api.RegUserStatus;
 
-
 import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

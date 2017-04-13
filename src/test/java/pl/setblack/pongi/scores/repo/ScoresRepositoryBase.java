@@ -63,7 +63,7 @@ abstract class ScoresRepositoryBase {
     }
 
     private void recordTestGames() {
-        for ( int j =0 ; j < 120 ; j++) {
+        for ( int j =0 ; j < 12 ; j++) {
             for (int i = 0; i < j; i++) {
                 final List<ScoreRecord> game = makeGameScore("jacek" + i, "placek" + i);
                 testee.registerScore(game);
