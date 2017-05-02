@@ -228,7 +228,15 @@ but this does the trick.
   of JOOQ creator: 
   (Get Back in Control of Your SQL)[https://www.youtube.com/watch?v=7bqmj-3DODE]
 
+My personal opinion is simple :
+ - either you need to use full SQL power - then you should prefer
+ JOOQ over JPA for you have a better control,
+ - or you just do not care about SQL and need only a persistence, 
+ for which case best solution is something like Airomem.
  
+ No place for JPA/Hibernate :cry:
+ 
+
  ## Testing
  
 Testing Ratpack contrary to lot of container is just awesome. Imagine that you test your HTTP web services just with HTTP.
