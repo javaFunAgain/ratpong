@@ -285,7 +285,18 @@ For tests there is in memory repository used.
  Second place where mutability can be found is for technical reasons in non  business code
  like handling of websockets (the collection of all sockets is  mutable).
  
+ ## JOOQ
  
+ If you are somehow sick and you still need to use SQL databases there is also a solution
+ just check this branch:
+ [h2 Database](https://github.com/javaFunAgain/ratpong/tree/h2.
+ Check the class:
+ [ScoresReopository](https://github.com/javaFunAgain/ratpong/blob/h2/src/main/java/pl/setblack/pongi/scores/repo/ScoresRepositorySQL.java).
+ 
+ Why JOOQ not JPA. There are a lot of reasons but maybe just listen to one of the videos
+ of JOOQ creator: 
+ (Get Back in Control of Your SQL)[https://www.youtube.com/watch?v=7bqmj-3DODE]
+
  
  ## WebSockets
  
