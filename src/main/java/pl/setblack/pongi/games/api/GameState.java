@@ -58,7 +58,7 @@ public class GameState implements Serializable {
     private GameState start(long startTime, final Random rnd) {
 
         return new GameState(
-                Ball.random(rnd),
+                Ball.randomDirection(rnd),
                 this.players,
                 startTime);
 
