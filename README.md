@@ -284,6 +284,34 @@ we create there in memory Repository (for tests) and then start Ratpack with use
  ## WebSockets
  
 
+For Websockets usage see [GameService](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/games/GamesService.java)
+ streamGame method.
+```
+private Handler streamGame(Chain chain) {
+        return ctx -> {
+            final String gameId = ctx.getPathTokens().get("id");
+            final Option<Flowable<GameState>> gsOpt = Option.of(this.gamesFlow.get(gameId));
+            gsOpt.forEach(gsFlow -> {
+                final Flowable<String> stringFlow = gsFlow
+
+                        .map(val -> {
+                            final String result =
+                                    chain.getRegistry()
+                                            .get(ObjectMapper.class)
+                                            .writeValueAsString(val);
+
+                            return result;
+                        });
 
 
+                WebSockets.websocketBroadcast(ctx, stringFlow);
+            });
+        };
 
+    }
+```
+
+As you see websocket stream is simply RxJava 2.0 <i>Flowable</i>!
+
+Each flowable contains changes of game state which are calulated
+at regular intervals - see createFlow method.

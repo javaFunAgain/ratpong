@@ -40,8 +40,6 @@ public class GamesService {
 
     private final ScoresRepositoryProcessor scoresRepo;
 
-
-
     private final ConcurrentHashMap<String, Flowable<GameState>> gamesFlow = new ConcurrentHashMap<>();
 
     public GamesService(
