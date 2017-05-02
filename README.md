@@ -3,7 +3,7 @@ This is POUNK game server implementation which is  network version of a classic 
 
 For client code go to : https://github.com/jarekratajski/scalajspounk
 
-# Runing?
+# Running?
 Just call ```gradle run ```
 Navigate to http://localhost:9000
 
