@@ -193,12 +193,12 @@ If you worked with SQL database such as Oracle you would have to queue both read
  It is good moment to introduce persistence.
  First persistence mechanism proposed here is [Airomem](https://github.com/airomem) (which is basically only Java 8 wrapper for [Prevayler](http://prevayler.org/).)
  To read more about it please go to  [Prevayler  page](http://prevayler.org/) 
- Or watch one of my presentations :smily:
+ Or watch one of my presentations :smile:
  
  For a moment it is enough to say that Airomem is a persistence that you have dreamed about - you just store your objects as 
- Java objects (maps, lists, whatever) and they are <i>magically<i/>(not really magically) stored in the background.
+ Java objects (maps, lists, whatever) and they are stored in the background.
  
- We simply design a system as if there was no persistence and everything we want is in in RAM (in fact it is).
+ Simply design a system as if there was no persistence and everything we want is in in RAM (in fact it is).
  This is exactly what the class [UserRepositoryInMemory](https://github.com/javaFunAgain/ratpong/blob/master/src/main/java/pl/setblack/pongi/users/repo/UsersRepositoryInMemory.java) does.
  ```
  public class UsersRepositoryInMemory implements UsersRepository, Serializable {
