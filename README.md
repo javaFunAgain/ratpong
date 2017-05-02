@@ -167,7 +167,7 @@ What you can do (win) is the control of your application threads! Imagine 5000 u
 In a classical (blocking) architecture it would mean 5000 threads are created, all of them making connection to database, waiting for answer, holding memory.  
 This does not sound good.  Imagine what your database feels.
 
- As an experienced human upu know that it is typically better to do
+ As an experienced human you know that it is typically better to do
  tasks one by one - than to start thousands of them concurrently. 
      
  This is exactly what can be done with blocking DB. You can limit how many concurrent queries  (or generally operations) you perform and
