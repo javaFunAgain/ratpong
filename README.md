@@ -218,8 +218,8 @@ but this does the trick.
 
  ## JOOQ
   
-  If you are somehow sick and you still need to use SQL databases there is also a solution
-  just check this branch:
+  If you are somehow sick and you still need to use SQL databases there is also a solution for you.
+  Just check this branch:
   [h2 Database](https://github.com/javaFunAgain/ratpong/tree/h2.
   Check the class:
   [ScoresReopository](https://github.com/javaFunAgain/ratpong/blob/h2/src/main/java/pl/setblack/pongi/scores/repo/ScoresRepositorySQL.java).
