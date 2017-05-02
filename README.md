@@ -172,8 +172,8 @@ This does not sound good.  Imagine what your database feels.
      
  This is exactly what can be done with blocking DB. You can limit how many concurrent queries  (or generally operations) you perform and
  simply queue all the rest. This is what "Processor" class does. 
- It uses very nice tool from Java classes called [Executor](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html). We create executor and tell how many threads should it use (lets say one!). Then we simply 
-     queue operations with it: 
+ It uses very nice tool from standard Java lib called [Executor](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html). Simply create an executor and tell how many threads should it use (lets say one!). 
+ Then just queue all subsequent operations using it: 
      
      ```
      writesExecutor.execute( ()-> {
