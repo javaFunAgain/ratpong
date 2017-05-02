@@ -317,7 +317,7 @@ private Handler streamGame(Chain chain) {
     }
 ```
 
-As you see websocket stream is simply RxJava 2.0 <i>Flowable</i>!
+As you see websocket stream is simply a RxJava 2.0 <i>Flowable</i>!
 
 Each flowable contains changes of game state which are calulated
 at regular intervals - see createFlow method.
