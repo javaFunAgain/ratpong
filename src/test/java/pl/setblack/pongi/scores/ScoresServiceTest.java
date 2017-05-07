@@ -6,7 +6,7 @@ import javaslang.Tuple3;
 import javaslang.collection.List;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import pl.setblack.pongi.JSONMapping;
+import pl.setblack.pongi.JsonMapping;
 import pl.setblack.pongi.Server;
 import pl.setblack.pongi.scores.repo.ScoresRepository;
 import pl.setblack.pongi.scores.repo.ScoresRepositoryInMem;
@@ -87,7 +87,7 @@ class ScoresServiceTest {
 
     private static List<UserScore> parseScores(String jsonString)
             throws IOException {
-        return JSONMapping.getJsonMapping().readValue(jsonString, new TypeReference<List<UserScore>>() {
+        return JsonMapping.getJsonMapping().readValue(jsonString, new TypeReference<List<UserScore>>() {
         });
     }
 

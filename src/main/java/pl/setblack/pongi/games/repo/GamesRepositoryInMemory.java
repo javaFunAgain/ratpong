@@ -1,6 +1,7 @@
 package pl.setblack.pongi.games.repo;
 
 import javaslang.collection.HashMap;
+import javaslang.collection.Map;
 import javaslang.collection.Seq;
 import javaslang.control.Option;
 import pl.setblack.pongi.games.api.GameInfo;
@@ -10,14 +11,11 @@ import java.io.Serializable;
 import java.time.Clock;
 import java.util.Random;
 
-/**
- * Created by jarek on 2/1/17.
- */
 public class GamesRepositoryInMemory implements GamesRepository, Serializable {
     private static final long serialVersionUID = 1L;
-    private volatile HashMap<String, GameInfo> allGamesInfo = HashMap.empty();
+    private volatile Map<String, GameInfo> allGamesInfo = HashMap.empty();
 
-    private volatile HashMap<String, GameState> allGamesState = HashMap.empty();
+    private volatile Map<String, GameState> allGamesState = HashMap.empty();
 
     private final Random random = new Random(137);
 

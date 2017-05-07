@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Flowable;
 import javaslang.collection.List;
 import javaslang.control.Option;
-import pl.setblack.pongi.JSONMapping;
+import pl.setblack.pongi.JsonMapping;
 import pl.setblack.pongi.games.api.GamePhase;
 import pl.setblack.pongi.games.api.GameState;
 import pl.setblack.pongi.games.api.Player;
@@ -187,7 +187,7 @@ public class GamesService {
         final Option<String> bearer = Option.of(ctx.getRequest().getHeaders().get("Authorization"));
         final Option<String> sessionId = bearer.map(b -> b.replace("Bearer ", ""));
         final Option<Session> session = sessionId.flatMap(sessionsRepo::getSession);
-        ctx.render(JSONMapping.toJSONPromise(session.map(
+        ctx.render(JsonMapping.toJsonPromise(session.map(
                 sess -> (CompletionStage<Object>) async.apply(sess)
         )
                 .getOrElse(

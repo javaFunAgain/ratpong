@@ -6,7 +6,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_10;
 import org.java_websocket.handshake.ServerHandshake;
 import org.junit.jupiter.api.Test;
-import pl.setblack.pongi.JSONMapping;
+import pl.setblack.pongi.JsonMapping;
 import pl.setblack.pongi.Server;
 import pl.setblack.pongi.games.api.GameInfo;
 import pl.setblack.pongi.games.api.GameState;
@@ -48,7 +48,7 @@ class GamesServiceTest {
                 testHttpClient -> {
                     postHttp(testHttpClient, "/api/games/games", "game1", user1);
                     final String response = getHttp(testHttpClient, "/api/games/games");
-                    final List<GameInfo> games = JSONMapping.getJsonMapping().readerFor( new TypeReference<List<GameInfo>>(){}).readValue(response);
+                    final List<GameInfo> games = JsonMapping.getJsonMapping().readerFor(new TypeReference<List<GameInfo>>(){}).readValue(response);
                     assertEquals("game1", games.get(0).name);
                 }
         );
@@ -59,10 +59,10 @@ class GamesServiceTest {
     public void user2CanJoinGame() throws Exception{
         prepareServer().test(
                 testHttpClient -> {
-                    final GameInfo game = JSONMapping.getJsonMapping().readerFor(GameInfo.class).readValue(
+                    final GameInfo game = JsonMapping.getJsonMapping().readerFor(GameInfo.class).readValue(
                             postHttp(testHttpClient, "/api/games/games", "game1", user1)
                     );
-                    final GameState game2 = JSONMapping.getJsonMapping().readerFor(GameState.class).readValue(
+                    final GameState game2 = JsonMapping.getJsonMapping().readerFor(GameState.class).readValue(
                             postHttp(testHttpClient, "/api/games/game/"+game.uuid, "game1", user2)
                     );
 
@@ -75,10 +75,10 @@ class GamesServiceTest {
     public void user2CanStreamGame() throws Exception{
         prepareServer().test(
                 testHttpClient -> {
-                    final GameInfo game = JSONMapping.getJsonMapping().readerFor(GameInfo.class).readValue(
+                    final GameInfo game = JsonMapping.getJsonMapping().readerFor(GameInfo.class).readValue(
                             postHttp(testHttpClient, "/api/games/games", "game1", user1)
                     );
-                    JSONMapping.getJsonMapping().readerFor(GameState.class).readValue(
+                    JsonMapping.getJsonMapping().readerFor(GameState.class).readValue(
                             postHttp(testHttpClient, "/api/games/game/"+game.uuid, "game1", user2)
                     );
 
@@ -86,7 +86,7 @@ class GamesServiceTest {
 
 
                     createGamesSocket(game, messagesQueue);
-                    final  GameState state = JSONMapping.getJsonMapping().readerFor(GameState.class).readValue(messagesQueue.poll(2, TimeUnit.SECONDS));
+                    final  GameState state = JsonMapping.getJsonMapping().readerFor(GameState.class).readValue(messagesQueue.poll(2, TimeUnit.SECONDS));
 
                     assertTrue(state.ball.speed.x != 0f);
 

@@ -90,7 +90,7 @@ public class Server {
     private static RatpackServerSpec createEmptyServer(RatpackServerSpec initial)
             throws Exception {
         return initial
-                .registryOf(r -> r.add(JSONMapping.getJsonMapping()));
+                .registryOf(r -> r.add(JsonMapping.getJsonMapping()));
     }
 
     private static RatpackServerSpec configuration(RatpackServerSpec server) {

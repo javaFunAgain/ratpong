@@ -14,7 +14,7 @@ import java.util.concurrent.CompletionStage;
 /**
  * Created by jarek on 3/17/17.
  */
-public class JSONMapping {
+public class JsonMapping {
 
     private static final ObjectMapper MAPPER = configureMapping();
 
@@ -28,10 +28,10 @@ public class JSONMapping {
 
 
     public static final ObjectMapper getJsonMapping() {
-        return JSONMapping.MAPPER;
+        return JsonMapping.MAPPER;
     }
 
-    public   static  Promise<JsonRender> toJSONPromise(CompletionStage<?> future) {
+    public   static  Promise<JsonRender> toJsonPromise(CompletionStage<?> future) {
         return Promise.async(
                 d -> d.accept(future.thenApply(Jackson::json))
         );

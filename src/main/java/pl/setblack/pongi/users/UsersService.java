@@ -1,13 +1,12 @@
 package pl.setblack.pongi.users;
 
 import javaslang.control.Option;
-import pl.setblack.pongi.JSONMapping;
+import pl.setblack.pongi.JsonMapping;
 import pl.setblack.pongi.users.api.LoginData;
 import pl.setblack.pongi.users.api.NewUser;
 import pl.setblack.pongi.users.repo.SessionsRepo;
 import pl.setblack.pongi.users.repo.UsersRepository;
 import pl.setblack.pongi.users.repo.UsersRepositoryProcessor;
-import ratpack.exec.Promise;
 import ratpack.func.Action;
 import ratpack.handling.Chain;
 import ratpack.handling.Handler;
@@ -50,7 +49,7 @@ public class UsersService {
             final String userId = ctx.getPathTokens().get("id");
             ctx.parse(NewUser.class).then(
                     newUser -> {
-                        ctx.render(JSONMapping.toJSONPromise(usersRepo.addUser(userId, newUser.password)));
+                        ctx.render(JsonMapping.toJsonPromise(usersRepo.addUser(userId, newUser.password)));
                     }
             );
         };
