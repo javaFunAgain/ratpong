@@ -15,14 +15,11 @@ import pl.setblack.pongi.scores.ScoreRecord;
 import pl.setblack.pongi.scores.repo.ScoresRepositoryProcessor;
 import pl.setblack.pongi.users.api.Session;
 import pl.setblack.pongi.users.repo.SessionsRepo;
-import ratpack.exec.Promise;
 import ratpack.func.Action;
 import ratpack.func.Block;
 import ratpack.handling.Chain;
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
-import ratpack.jackson.Jackson;
-import ratpack.jackson.JsonRender;
 import ratpack.websocket.WebSockets;
 
 import java.util.UUID;
@@ -42,7 +39,7 @@ public class GamesService {
 
     private final ConcurrentHashMap<String, Flowable<GameState>> gamesFlow = new ConcurrentHashMap<>();
 
-    public GamesService(
+    GamesService(
             final GamesRepository gamesRepo,
             final SessionsRepo sessionsRepo,
             final ScoresRepositoryProcessor scoresRepo) {
@@ -61,8 +58,6 @@ public class GamesService {
         return chain -> chain
                 .prefix("game", games ->
                         games.post(":id", joinGame())
-
-
                 )
                 .prefix("games", games ->
                         games.all(
@@ -73,7 +68,6 @@ public class GamesService {
                                                         .post(createGame(noGameId)))
                         )
                 )
-
                 .prefix("players", moves ->
                         moves.post(":id", movePaddle()))
                 .prefix("stream", stream ->
@@ -94,23 +88,11 @@ public class GamesService {
         return ctx -> {
             final String gameId = ctx.getPathTokens().get("id");
             final Option<Flowable<GameState>> gsOpt = Option.of(this.gamesFlow.get(gameId));
-            gsOpt.forEach(gsFlow -> {
-                final Flowable<String> stringFlow = gsFlow
-
-                        .map(val -> {
-                            final String result =
-                                    chain.getRegistry()
-                                            .get(ObjectMapper.class)
-                                            .writeValueAsString(val);
-
-                            return result;
-                        });
-
-
-                WebSockets.websocketBroadcast(ctx, stringFlow);
-            });
+            gsOpt.forEach(gsFlow -> WebSockets.websocketBroadcast(ctx, gsFlow
+                    .map(val -> chain.getRegistry()
+                            .get(ObjectMapper.class)
+                            .writeValueAsString(val))));
         };
-
     }
 
     private Block createGame(Context ctx) {
@@ -130,23 +112,27 @@ public class GamesService {
             final String gameUUID = ctx.getPathTokens().get("id");
             renderSecure(
                     ctx,
-                    sess -> {
-                        final CompletionStage<Option<GameState>> state = gamesRepo
-                                .joinGame(gameUUID, sess.userId);
-                        return state.thenApply(gameOption -> {
-                            gameOption.forEach(game -> {
-                                if (game.phase == GamePhase.STARTED) {
-                                    this.gamesFlow.computeIfAbsent(gameUUID, this::createFlow);
-                                }
-                            });
-                            return gameOption;
-                        });
-                    });
+                    sess -> getSessionCompletionStageFunction(sess, gameUUID));
         };
     }
 
+    private CompletionStage<Option<GameState>> getSessionCompletionStageFunction(final Session sess, final String gameUUID) {
+
+        final CompletionStage<Option<GameState>> state = gamesRepo
+                .joinGame(gameUUID, sess.userId);
+        return state.thenApply(gameOption -> {
+            gameOption.forEach(game -> {
+                if (game.phase == GamePhase.STARTED) {
+                    this.gamesFlow.computeIfAbsent(gameUUID, this::createFlow);
+                }
+            });
+            return gameOption;
+        });
+
+    }
+
     private Flowable<GameState> createFlow(String gameUUID) {
-        final Flowable<GameState> stateFlow = Flowable.interval(1000, 50, TimeUnit.MILLISECONDS)
+        return Flowable.interval(1000, 50, TimeUnit.MILLISECONDS)
                 .flatMap(whatever -> {
                     final CompletionStage<Option<GameState>> future = this.gamesRepo.push(gameUUID);
                     future.thenAccept(o -> o.forEach(gs -> {
@@ -156,10 +142,8 @@ public class GamesService {
                     }));
                     return Flowable.fromFuture(future.toCompletableFuture());
                 })
-                .filter(s -> s.isDefined())
-                .map(s -> s.get());
-
-        return stateFlow;
+                .filter(Option::isDefined)
+                .map(Option::get);
     }
 
     private void endGame(String gameUUID, GameState gs) {
@@ -201,10 +185,10 @@ public class GamesService {
                                   Function<Session, CompletionStage<T>> async
     ) {
         final Option<String> bearer = Option.of(ctx.getRequest().getHeaders().get("Authorization"));
-        final Option<String> sessionId = bearer.map( b->b.replace("Bearer ", ""));
+        final Option<String> sessionId = bearer.map(b -> b.replace("Bearer ", ""));
         final Option<Session> session = sessionId.flatMap(sessionsRepo::getSession);
-        ctx.render(JSONMapping.toJSONPromise( session.map(
-                sess -> (CompletionStage<Object>)async.apply(sess)
+        ctx.render(JSONMapping.toJSONPromise(session.map(
+                sess -> (CompletionStage<Object>) async.apply(sess)
         )
                 .getOrElse(
                         CompletableFuture.completedFuture("unauthorized")

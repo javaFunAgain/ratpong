@@ -5,9 +5,8 @@ package pl.setblack.pongi.scores;
  */
 public enum GameResult {
     WON(ScoreRules.SCORE_FOR_WIN),
-    LOST(ScoreRules.SCORE_FOR_LOSS),
-    FILE_NOT_FOUND(ScoreRules.SCORE_FOR_LOSS) // could not resist it - see http://thedailywtf.com/articles/What_Is_Truth_0x3f_
-    ;
+    LOST(ScoreRules.SCORE_FOR_LOSS);
+
     public final int score;
 
     GameResult(int score) {
