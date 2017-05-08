@@ -1,6 +1,7 @@
 # ratpong
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b8c98fc3e4274badb7cecb5164411e03)](https://www.codacy.com/app/jarekratajski/ratpong?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=javaFunAgain/ratpong&amp;utm_campaign=Badge_Grade)
+[Travis build status ](https://travis-ci.org/javaFunAgain/ratpong.svg?branch=master)
 
 This is POUNK game server implementation which is  network version of a classic PONG. 
 
