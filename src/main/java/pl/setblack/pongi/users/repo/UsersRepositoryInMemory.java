@@ -3,7 +3,6 @@ package pl.setblack.pongi.users.repo;
 import javaslang.collection.HashMap;
 import javaslang.control.Option;
 import pl.setblack.pongi.users.api.RegUserStatus;
-import pl.setblack.pongi.users.api.Session;
 
 import java.io.Serializable;
 
@@ -11,7 +10,6 @@ public class UsersRepositoryInMemory implements UsersRepository, Serializable {
     private static final long serialVersionUID = 1L;
 
     private volatile HashMap<String, UserData> allUsers = HashMap.empty();
-
 
 
     public RegUserStatus addUser(final String login, final String pass) {
@@ -24,7 +22,7 @@ public class UsersRepositoryInMemory implements UsersRepository, Serializable {
     }
 
     public boolean login(final String login, final String password) {
-        return allUsers.get(login).map( userData -> userData
+        return allUsers.get(login).map(userData -> userData
                 .hashedPassword
                 .equals(password))
                 .getOrElse(false);

@@ -3,7 +3,6 @@ package pl.setblack.pongi.games.api;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import javaslang.Function1;
-import javaslang.Tuple2;
 import javaslang.collection.LinearSeq;
 import javaslang.collection.List;
 

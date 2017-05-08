@@ -27,7 +27,7 @@ public class GamesModule {
             final Clock clock,
             final SessionsRepo sessionsRepo,
             final ScoresRepositoryProcessor scoresRepo) {
-        this (
+        this(
                 new GamesRepoES(clock),
                 sessionsRepo,
                 scoresRepo);
@@ -35,7 +35,7 @@ public class GamesModule {
 
 
     public GamesService createService() {
-        return new GamesService(gamesRepo,sessionsRepo, scoresRepo);
+        return new GamesService(gamesRepo, sessionsRepo, scoresRepo);
     }
 
 }

@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Immutable
 @JsonDeserialize
-public class Player implements Serializable{
+public class Player implements Serializable {
     private static final long serialVersionUID = 1L;
     public final int score;
     public final String name;
@@ -25,13 +25,13 @@ public class Player implements Serializable{
         return new Player(this.score, this.name, this.paddle.paddleMove(timeDiff));
     }
 
-     Player makeMoving(String userId, float targetY) {
+    Player makeMoving(String userId, float targetY) {
         return (this.name.equals(userId))
                 ? new Player(this.score, this.name, this.paddle.movingTo(targetY))
                 : this;
     }
 
     Player score() {
-        return new Player(this.score+1, name, paddle);
+        return new Player(this.score + 1, name, paddle);
     }
 }

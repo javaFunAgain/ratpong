@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @JsonDeserialize
 @Immutable
-public class UserScore implements Serializable{
+public class UserScore implements Serializable {
     private static final long serialVersionUID = 1L;
     public final String userId;
     public final int totalScore;
@@ -46,9 +46,9 @@ public class UserScore implements Serializable{
     public UserScore add(ScoreRecord rec) {
         final int newScore = this.totalScore + rec.result.score;
         final int newWon = this.gamesWon +
-                (rec.result == GameResult.WON ?  1: 0);
+                (rec.result == GameResult.WON ? 1 : 0);
         final int newLost = this.gamesLost +
-                (rec.result == GameResult.LOST ?  1: 0);
+                (rec.result == GameResult.LOST ? 1 : 0);
         final int newPlayed = this.gamesPlayed + 1;
         final int newPointsScored = this.pointsScored + rec.playerScored;
         final int newPointsLost = this.pointsLost + rec.opponentScore;

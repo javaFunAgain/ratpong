@@ -39,13 +39,12 @@ public class GamesRepositoryProcessor {
     }
 
 
-
     public CompletionStage<Option<GameState>> push(final String gameUUID) {
-        return callLongOneOperation( ()->gamesRepo.push(gameUUID));
+        return callLongOneOperation(() -> gamesRepo.push(gameUUID));
     }
 
     public CompletionStage<Boolean> movePaddle(String gameId, String userId, float targetY) {
-        return callLongOneOperation( ()->gamesRepo.movePaddle(gameId, userId, targetY));
+        return callLongOneOperation(() -> gamesRepo.movePaddle(gameId, userId, targetY));
     }
 
     public void removeGame(final String gameUUID) {

@@ -10,13 +10,13 @@ import java.time.Clock;
 public class Main {
 
 
-    public static void main(final String ... args ) throws  Exception{
+    public static void main(final String... args) throws Exception {
         final Clock clock = Clock.systemUTC();
 
         final UsersModule usersModule = new UsersModule(clock);
         final ScoresModule scoresModule = new ScoresModule();
         final GamesModule gamesModule = new GamesModule(
-                clock,  usersModule.getSessionsRepo() , scoresModule.getScoresRepository() );
+                clock, usersModule.getSessionsRepo(), scoresModule.getScoresRepository());
 
 
         Server server = new Server(

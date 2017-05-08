@@ -16,7 +16,7 @@ public class GamesRepoES implements GamesRepository {
     public GamesRepoES(final Clock clock) {
         persistent = Persistent.loadOptional(
                 Paths.get("airomem/games"),
-                ()->new GamesRepositoryInMemory(clock)
+                () -> new GamesRepositoryInMemory(clock)
         );
     }
 
@@ -27,9 +27,8 @@ public class GamesRepoES implements GamesRepository {
 
     @Override
     public Seq<GameInfo> listGames() {
-        return persistent.query( rep->rep.listGames());
+        return persistent.query(rep -> rep.listGames());
     }
-
 
 
     @Override
@@ -39,12 +38,12 @@ public class GamesRepoES implements GamesRepository {
 
     @Override
     public Option<GameState> getGame(String uuid) {
-        return persistent.query( rep ->rep.getGame(uuid));
+        return persistent.query(rep -> rep.getGame(uuid));
     }
 
     @Override
     public boolean movePaddle(String gameId, String userId, float targetY) {
-        return persistent.executeAndQuery(rep->rep.movePaddle(gameId, userId, targetY));
+        return persistent.executeAndQuery(rep -> rep.movePaddle(gameId, userId, targetY));
     }
 
     @Override
@@ -54,6 +53,6 @@ public class GamesRepoES implements GamesRepository {
 
     @Override
     public void removeGame(final String gameUUID) {
-        persistent.execute(rep->rep.removeGame(gameUUID));
+        persistent.execute(rep -> rep.removeGame(gameUUID));
     }
 }

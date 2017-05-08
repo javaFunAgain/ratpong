@@ -22,7 +22,7 @@ public class UsersRepositoryProcessor {
 
     public CompletionStage<RegUserStatus> addUser(final String login, final String pass) {
         final CompletableFuture<RegUserStatus> result = new CompletableFuture<>();
-        writesExecutor.execute( ()-> {
+        writesExecutor.execute(() -> {
             result.complete(this.usersRepository.addUser(login, pass));
         });
         return result;

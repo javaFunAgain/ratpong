@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Immutable
 @JsonDeserialize
-public class GameInfo implements Serializable{
+public class GameInfo implements Serializable {
     private static final long serialVersionUID = 1L;
     public final String name;
 
@@ -27,14 +27,14 @@ public class GameInfo implements Serializable{
     }
 
     public GameInfo(String name, String uuid, String player1) {
-        this(name,uuid, List.of(player1));
+        this(name, uuid, List.of(player1));
     }
 
     public Option<GameInfo> withPlayer(String userId) {
-        if ( this.players.contains(userId)) {
+        if (this.players.contains(userId)) {
             return Option.some(this);
-        } else if ( this.players.size() <=1 ){
-            return  Option.some( new GameInfo(this.name, this.uuid, this.players.append(userId)));
+        } else if (this.players.size() <= 1) {
+            return Option.some(new GameInfo(this.name, this.uuid, this.players.append(userId)));
         } else {
             return Option.none();
         }

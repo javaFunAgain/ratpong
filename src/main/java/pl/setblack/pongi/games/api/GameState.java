@@ -2,9 +2,7 @@ package pl.setblack.pongi.games.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import javaslang.Tuple;
 import javaslang.Tuple2;
-import javaslang.collection.List;
 import javaslang.control.Option;
 
 import javax.annotation.concurrent.Immutable;
@@ -34,7 +32,6 @@ public class GameState implements Serializable {
     }
 
 
-
     public static Option<GameState> startFrom(
             GameInfo info,
             long startTime,
@@ -51,7 +48,6 @@ public class GameState implements Serializable {
     }
 
 
-
     private GameState start(long startTime, final Random rnd) {
 
         return new GameState(
@@ -62,12 +58,12 @@ public class GameState implements Serializable {
     }
 
     public GameState push(long newTime, final Random rnd) {
-        if ( this.phase == GamePhase.STARTED) {
+        if (this.phase == GamePhase.STARTED) {
             long diff = newTime - this.updateTime;
             float scale = diff / GameParams.RELATIVE_SPEED;
             final Tuple2<Ball, Players> newPositions = this.ball
                     .move(scale)
-                    .bounce(this.players,rnd );
+                    .bounce(this.players, rnd);
             final Function<Player, Player> movePaddle = player -> player.movePaddle(diff);
             final Players newPlayers = newPositions._2.map(movePaddle);
 

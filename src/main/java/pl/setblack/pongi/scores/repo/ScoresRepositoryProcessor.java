@@ -22,8 +22,8 @@ public class ScoresRepositoryProcessor {
         this.repository = repository;
     }
 
-    public void registerScore(List<ScoreRecord> rec){
-            this.writesExecutor.execute(()->repository.registerScore(rec));
+    public void registerScore(List<ScoreRecord> rec) {
+        this.writesExecutor.execute(() -> repository.registerScore(rec));
     }
 
     public CompletionStage<Option<UserScore>> getUserScore(String userId) {

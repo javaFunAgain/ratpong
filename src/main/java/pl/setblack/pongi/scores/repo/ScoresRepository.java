@@ -10,9 +10,9 @@ import pl.setblack.pongi.scores.UserScore;
  */
 public interface ScoresRepository {
 
-        void registerScore(List<ScoreRecord> rec);
+    void registerScore(List<ScoreRecord> rec);
 
-        Option<UserScore> getUserScore(String userId);
+    Option<UserScore> getUserScore(String userId);
 
-        List<UserScore> getTopScores(final int limit);
+    List<UserScore> getTopScores(final int limit);
 }

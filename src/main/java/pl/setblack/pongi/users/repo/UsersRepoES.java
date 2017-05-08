@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 /**
  * Created by jarek on 2/4/17.
  */
-public class UsersRepoES implements UsersRepository{
+public class UsersRepoES implements UsersRepository {
 
 
     private final Persistent<UsersRepositoryInMemory> controller;
@@ -27,11 +27,11 @@ public class UsersRepoES implements UsersRepository{
 
     @Override
     public RegUserStatus addUser(String login, String pass) {
-        return controller.executeAndQuery( usersRepo -> usersRepo.addUser(login, pass));
+        return controller.executeAndQuery(usersRepo -> usersRepo.addUser(login, pass));
     }
 
     @Override
     public boolean login(String login, String password) {
-        return controller.query( usersRepo ->usersRepo.login(login, password));
+        return controller.query(usersRepo -> usersRepo.login(login, password));
     }
 }

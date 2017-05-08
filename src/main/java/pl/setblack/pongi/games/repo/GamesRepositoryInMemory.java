@@ -35,6 +35,7 @@ public class GamesRepositoryInMemory implements GamesRepository, Serializable {
             return Option.some(newGame);
         }
     }
+
     @Override
     public Seq<GameInfo> listGames() {
         return allGamesInfo.values();
@@ -45,11 +46,12 @@ public class GamesRepositoryInMemory implements GamesRepository, Serializable {
                 this.allGamesState.get(info.uuid);
         return currentState.orElse(() -> {
             Option<GameState> newState = GameState.startFrom(info, this.clock.millis(), this.random);
-            newState.forEach( s -> this.allGamesState = this.allGamesState.put(info.uuid, s));
+            newState.forEach(s -> this.allGamesState = this.allGamesState.put(info.uuid, s));
             return newState;
         });
 
     }
+
     @Override
     public Option<GameState> joinGame(final String uuid, final String userId) {
         return this.allGamesInfo.get(uuid)
@@ -60,16 +62,17 @@ public class GamesRepositoryInMemory implements GamesRepository, Serializable {
                     return startNewGame(g);
                 });
     }
+
     @Override
     public Option<GameState> getGame(final String uuid) {
         return this.allGamesState.get(uuid);
     }
 
     @Override
-    public boolean movePaddle(final String gameId, final String userId ,final float targetY) {
-        return this.getGame(gameId).map( g->g.playerMovingTo(userId, targetY)).
-                map( g -> {
-                    this.allGamesState  = this.allGamesState.put(gameId, g);
+    public boolean movePaddle(final String gameId, final String userId, final float targetY) {
+        return this.getGame(gameId).map(g -> g.playerMovingTo(userId, targetY)).
+                map(g -> {
+                    this.allGamesState = this.allGamesState.put(gameId, g);
                     return true;
                 }).getOrElse(false);
 
@@ -77,9 +80,9 @@ public class GamesRepositoryInMemory implements GamesRepository, Serializable {
 
     @Override
     public Option<GameState> push(String gameUUID) {
-        final Option<GameState> gameOpt = this.allGamesState.get( gameUUID);
-        return gameOpt.map( game -> {
-            final GameState newState= game.push(this.clock.millis(), this.random);
+        final Option<GameState> gameOpt = this.allGamesState.get(gameUUID);
+        return gameOpt.map(game -> {
+            final GameState newState = game.push(this.clock.millis(), this.random);
             this.allGamesState = this.allGamesState.put(gameUUID, newState);
             return newState;
         });

@@ -1,14 +1,11 @@
 package pl.setblack.pongi.games.api;
 
-import javaslang.Tuple;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Created by jarek on 4/13/17.
- */
 class GameStateTest {
+    private static final float MINIMAL_DIST = 0.001f;
+
     @Test
     public void shouldMoveBallOnPush() {
 
@@ -23,7 +20,22 @@ class GameStateTest {
 
     private GameState createGameState( final float player1pos, final float player2pos,
                                        Ball ball) {
-        throw new UnsupportedOperationException();
+        return  createGameState(
+                new Player( 0, "ply1",
+                        movePaddleAllTheWay(Paddle.createPaddleForPlayer(1), player1pos)),
+                new Player( 0, "ply2",
+                        movePaddleAllTheWay(Paddle.createPaddleForPlayer(2), player2pos)),
+                ball);
+
     }
 
+
+    private Paddle movePaddleAllTheWay( Paddle paddle, float pos) {
+        final Paddle p = paddle.movingTo(pos);
+        if ( Math.abs(p.y - pos) < MINIMAL_DIST) {
+               return p;
+        } else {
+            return movePaddleAllTheWay(p.paddleMove(1000), pos);
+        }
+    }
 }

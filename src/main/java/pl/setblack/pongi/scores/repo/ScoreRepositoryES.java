@@ -20,23 +20,23 @@ public class ScoreRepositoryES implements ScoresRepository {
 
     public ScoreRepositoryES(Path where) {
         this.perstenceController = Persistent.loadOptional(
-                where, ()-> new ScoresRepositoryInMem());
+                where, () -> new ScoresRepositoryInMem());
     }
 
     @Override
     public List<UserScore> getTopScores(int limit) {
-        return this.perstenceController.query( scoreRepo -> scoreRepo.getTopScores(limit));
+        return this.perstenceController.query(scoreRepo -> scoreRepo.getTopScores(limit));
     }
 
     @Override
     public void registerScore(List<ScoreRecord> rec) {
 
-            this.perstenceController.execute( scoreRepo -> scoreRepo.registerScore(rec) );
+        this.perstenceController.execute(scoreRepo -> scoreRepo.registerScore(rec));
     }
 
     @Override
     public Option<UserScore> getUserScore(String userId) {
-         return this.perstenceController.query( scoreRepo -> scoreRepo.getUserScore(userId));
+        return this.perstenceController.query(scoreRepo -> scoreRepo.getUserScore(userId));
     }
 
     public void close() {

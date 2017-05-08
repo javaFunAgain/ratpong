@@ -23,11 +23,11 @@ public class SessionsRepo {
     }
 
 
-    public  Session startSession(String userId) {
-        final UUID  uuid = UUID.randomUUID();
+    public Session startSession(String userId) {
+        final UUID uuid = UUID.randomUUID();
         final LocalDateTime now = LocalDateTime.now(this.clock);
         final LocalDateTime expirationTime = now.plusDays(1);
-        final Session sess = new Session(userId, uuid,expirationTime);
+        final Session sess = new Session(userId, uuid, expirationTime);
         this.activeSesssions.updateAndGet(map -> map.put(uuid.toString(), sess));
         return sess;
     }

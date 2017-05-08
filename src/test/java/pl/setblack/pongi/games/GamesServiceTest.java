@@ -66,7 +66,7 @@ class GamesServiceTest {
                             postHttp(testHttpClient, "/api/games/game/"+game.uuid, "game1", user2)
                     );
 
-                    assertTrue(game2.players.player2.name.equals("user2"));
+                    assertTrue("user2".equals(game2.players.player2.name));
                 }
         );
     }
@@ -104,17 +104,17 @@ class GamesServiceTest {
 
             @Override
             public void onOpen( ServerHandshake handshake ) {
-
+                //no action
             }
 
             @Override
             public void onClose( int code, String reason, boolean remote ) {
-
+                //no action
             }
 
             @Override
             public void onError( Exception ex ) {
-
+                //no action
             }
 
         };

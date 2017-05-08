@@ -31,7 +31,7 @@ public class JsonMapping {
         return JsonMapping.MAPPER;
     }
 
-    public   static  Promise<JsonRender> toJsonPromise(CompletionStage<?> future) {
+    public static Promise<JsonRender> toJsonPromise(CompletionStage<?> future) {
         return Promise.async(
                 d -> d.accept(future.thenApply(Jackson::json))
         );

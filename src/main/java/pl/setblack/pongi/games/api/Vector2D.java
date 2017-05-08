@@ -23,13 +23,13 @@ public class Vector2D implements Serializable {
     }
 
     public Vector2D() {
-        this(0f,0f);
+        this(0f, 0f);
     }
 
     public static Vector2D fromAngle(double angle, double length) {
-        float nx = (float)(Math.sin(angle)*length);
-        float ny = (float)(Math.cos(angle)*length);
-        return new Vector2D(nx,ny);
+        float nx = (float) (Math.sin(angle) * length);
+        float ny = (float) (Math.cos(angle) * length);
+        return new Vector2D(nx, ny);
     }
 
     public Vector2D bounceX() {

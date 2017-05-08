@@ -18,7 +18,7 @@ public class ScoresModule {
     }
 
     public ScoresModule() {
-        this ( new ScoreRepositoryES(Paths.get("airomem/score")));
+        this(new ScoreRepositoryES(Paths.get("airomem/score")));
     }
 
     public ScoresService createService() {

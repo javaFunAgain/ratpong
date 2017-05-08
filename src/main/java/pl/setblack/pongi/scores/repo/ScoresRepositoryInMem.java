@@ -10,7 +10,7 @@ import pl.setblack.pongi.scores.UserScore;
 import java.io.Serializable;
 import java.util.Comparator;
 
-public class ScoresRepositoryInMem implements ScoresRepository, Serializable{
+public class ScoresRepositoryInMem implements ScoresRepository, Serializable {
     private static final long serialVersionUID = 1L;
     private volatile PriorityQueue<UserScore> bestScores;
     private volatile HashMap<String, UserScore> userScores;
@@ -30,10 +30,10 @@ public class ScoresRepositoryInMem implements ScoresRepository, Serializable{
 
     private void registerSingleScore(final ScoreRecord rec) {
         final Option<UserScore> current = this.userScores.get(rec.userId);
-        current.orElse( Option.some(
+        current.orElse(Option.some(
                 UserScore.emptyFor(rec.userId)))
-                .map ( score -> add( score, rec))
-                .forEach( score -> storeUserScore( score));
+                .map(score -> add(score, rec))
+                .forEach(score -> storeUserScore(score));
 
     }
 
@@ -61,6 +61,7 @@ public class ScoresRepositoryInMem implements ScoresRepository, Serializable{
     private static final class ScoreComparator
             implements Comparator<UserScore>, Serializable {
         private static final long serialVersionUID = 1L;
+
         @Override
         public int compare(UserScore o1, UserScore o2) {
             return o2.totalScore - o1.totalScore;

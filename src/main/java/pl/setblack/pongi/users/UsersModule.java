@@ -1,13 +1,11 @@
 package pl.setblack.pongi.users;
 
-import pl.setblack.pongi.users.api.Session;
 import pl.setblack.pongi.users.repo.SessionsRepo;
 import pl.setblack.pongi.users.repo.UsersRepoES;
 import pl.setblack.pongi.users.repo.UsersRepository;
 
 import java.nio.file.Paths;
 import java.time.Clock;
-import java.util.function.Supplier;
 
 
 public class UsersModule {
@@ -21,7 +19,7 @@ public class UsersModule {
         this.sessionsRepo = sessionsRepo;
     }
 
-    public UsersModule (Clock clock) {
+    public UsersModule(Clock clock) {
         this(
                 new UsersRepoES(Paths.get("airomem/users")),
                 new SessionsRepo(clock));
@@ -31,7 +29,7 @@ public class UsersModule {
         return new UsersService(this.usersRepo, this.sessionsRepo);
     }
 
-    public SessionsRepo getSessionsRepo () {
+    public SessionsRepo getSessionsRepo() {
         return this.sessionsRepo;
     }
 

@@ -43,30 +43,29 @@ public class Server {
     }
 
 
-
     public static RatpackServer createUnconfiguredServer(Action<Chain> handlers) {
-        return createDefaultServer(makeApi(handlers), x->x);
+        return createDefaultServer(makeApi(handlers), x -> x);
     }
 
-    private static RatpackServer createDefaultServer(Action<Chain> handlers ) {
+    private static RatpackServer createDefaultServer(Action<Chain> handlers) {
         return createDefaultServer(makeApi(handlers).append(serveFiles()), Server::configuration);
     }
 
 
-    private static Action<Chain> makeApi( Action<Chain> handlers) {
+    private static Action<Chain> makeApi(Action<Chain> handlers) {
         return chain -> chain.prefix("api", handlers);
     }
 
     private static Action<Chain> serveFiles() {
-        return chain->chain
+        return chain -> chain
                 .files(fileHandlerSpec -> fileHandlerSpec
-                .dir("src/main/webapp")
-                .indexFiles("index.html")
-        );
+                        .dir("src/main/webapp")
+                        .indexFiles("index.html")
+                );
     }
 
     private static RatpackServer createDefaultServer(Action<Chain> handlers,
-                                                    Function1<RatpackServerSpec, RatpackServerSpec> configuration ) {
+                                                     Function1<RatpackServerSpec, RatpackServerSpec> configuration) {
         try {
             return RatpackServer.of(server -> configuration.apply(createEmptyServer(server))
                     .handlers(chain ->
@@ -77,7 +76,6 @@ public class Server {
             throw new IllegalStateException(e);
         }
     }
-
 
 
     private Action<Chain> defineApi() {
@@ -99,10 +97,10 @@ public class Server {
             return server.serverConfig(
                     scb ->
                             scb
-                            .baseDir(currentRelativePath)
-                            .publicAddress(new URI("http://0.0.0.0"))
-                            .port(9000)
-                            .threads(4)
+                                    .baseDir(currentRelativePath)
+                                    .publicAddress(new URI("http://0.0.0.0"))
+                                    .port(9000)
+                                    .threads(4)
             );
         } catch (Exception e) {
             throw new IllegalStateException(e);

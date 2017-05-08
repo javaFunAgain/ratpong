@@ -23,8 +23,8 @@ public class ScoresService {
 
     public Action<Chain> scores() {
         return chain -> chain
-                .prefix("scores", ctx->
-                     ctx.get( getScores())
+                .prefix("scores", ctx ->
+                        ctx.get(getScores())
                 );
     }
 
@@ -32,13 +32,13 @@ public class ScoresService {
         return ctx -> {
             final int limit =
                     Option.of(ctx.getRequest().getQueryParams().get("limit"))
-                    .map( Integer::parseInt)
-                    .getOrElse(20);
+                            .map(Integer::parseInt)
+                            .getOrElse(20);
             ctx.render(Promise.async(
-                    downstream->{
-                         downstream.accept( nonBlockingRepo.getTopScores(limit)
-                                 .thenApply( obj -> obj)
-                                 .thenApply(Jackson::json));
+                    downstream -> {
+                        downstream.accept(nonBlockingRepo.getTopScores(limit)
+                                .thenApply(obj -> obj)
+                                .thenApply(Jackson::json));
                     }));
         };
     }
