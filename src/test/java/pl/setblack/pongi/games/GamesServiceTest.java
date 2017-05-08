@@ -66,7 +66,7 @@ class GamesServiceTest {
                             postHttp(testHttpClient, "/api/games/game/"+game.uuid, "game1", user2)
                     );
 
-                    assertTrue(game2.players._2.name.equals("user2"));
+                    assertTrue(game2.players.player2.name.equals("user2"));
                 }
         );
     }

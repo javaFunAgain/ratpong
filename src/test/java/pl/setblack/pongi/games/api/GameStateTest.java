@@ -17,7 +17,7 @@ class GameStateTest {
 
     private GameState createGameState(
             final Player player1, final Player player2, final Ball ball ) {
-        final GameState state = new GameState(ball, Tuple.of(player1, player2), 0);
+        final GameState state = new GameState(ball, Players.of(player1, player2), 0);
         return state;
     }
 

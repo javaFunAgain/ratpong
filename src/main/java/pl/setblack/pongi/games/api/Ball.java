@@ -41,30 +41,31 @@ public class Ball extends GameObject {
         return new Ball( this.x + speed.x*scale, this.y + speed.y*scale, this.speed);
     }
 
-    private Tuple2<Ball, Tuple2<Player,Player>> bouncePlayer1(Tuple2<Player, Player> players, final Random rnd) {
+    //A piece of smart code in Players should reduce both methods code duplication
+    private Tuple2<Ball, Players> bouncePlayer1(final Players players, final Random rnd) {
         if ( this.x < 0 && speed.x < 0) {
-            if (isTouchingPaddle(players._1.paddle, this.y)){
+            if (isTouchingPaddle(players.player1.paddle, this.y)){
                 return Tuple.of(new Ball(0f, this.y, this.speed.bounceX()), players);
             } else {
-                return Tuple.of(Ball.randomDirection(rnd), players.map(pl1->pl1, pl2->pl2.score()));
+                return Tuple.of(Ball.randomDirection(rnd), players.mapPlayer(2, pl2->pl2.score()));
             }
         }
         return Tuple.of(this, players);
     }
 
-    private Tuple2<Ball, Tuple2<Player,Player>> bouncePlayer2(Tuple2<Player, Player> players, final Random rnd) {
+    private Tuple2<Ball, Players> bouncePlayer2(final Players players, final Random rnd) {
         if ( this.x > 1.0f && speed.x > 0) {
-            if (isTouchingPaddle(players._2.paddle, this.y)){
+            if (isTouchingPaddle(players.player2.paddle, this.y)){
                 return Tuple.of( new Ball(1f, this.y, this.speed.bounceX()),players);
             } else {
-                return Tuple.of(Ball.randomDirection(rnd), players.map(pl1->pl1.score(), pl2->pl2));
+                return Tuple.of(Ball.randomDirection(rnd), players.mapPlayer(1, pl1->pl1.score()));
             }
         }
         return Tuple.of(this, players);
     }
 
-    private Tuple2<Ball, Tuple2<Player,Player>> bounceX(Tuple2<Player, Player> players, final Random rnd) {
-        final Tuple2<Ball, Tuple2<Player,Player>> afterPlayer1 = bouncePlayer1(players, rnd);
+    private Tuple2<Ball, Players> bounceX(Players players, final Random rnd) {
+        final Tuple2<Ball, Players> afterPlayer1 = bouncePlayer1(players, rnd);
         return afterPlayer1._1.bouncePlayer2(afterPlayer1._2,rnd);
     }
 
@@ -83,7 +84,7 @@ public class Ball extends GameObject {
     }
 
 
-    Tuple2<Ball,Tuple2<Player, Player>> bounce(Tuple2<Player,Player> players, final Random rnd) {
+    Tuple2<Ball,Players> bounce(Players players, final Random rnd) {
         return this.bounceY().bounceX(players, rnd);
     }
 }

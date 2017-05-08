@@ -18,25 +18,22 @@ public class GameState implements Serializable {
     private static final long serialVersionUID = 1L;
     public final GamePhase phase;
     public final Ball ball;
-    public final Tuple2<Player, Player> players;
+    public final Players players;
     public final long updateTime;
 
 
     @JsonCreator
-    public GameState(Ball ball, Tuple2<Player, Player> players, long updateTime) {
+    public GameState(
+            final Ball ball,
+            final Players players,
+            final long updateTime) {
         this.ball = ball;
         this.players = players;
         this.updateTime = updateTime;
-        this.phase = phaseFromScore(players);
+        this.phase = players.phaseFromScore();
     }
 
-    private GamePhase phaseFromScore(Tuple2<Player,Player> players) {
-        if ( List.of(players._1, players._2).filter(p -> p.score>=15).isEmpty()) {
-            return GamePhase.STARTED;
-        } else {
-            return GamePhase.ENDED;
-        }
-    }
+
 
     public static Option<GameState> startFrom(
             GameInfo info,
@@ -47,7 +44,7 @@ public class GameState implements Serializable {
             final Ball ball = new Ball(0.5f, 0.5f);
             final Player player1 = new Player(0, info.players.get(0), Paddle.createPaddleForPlayer(1));
             final Player player2 = new Player(0, info.players.get(1), Paddle.createPaddleForPlayer(2));
-            return Option.some(new GameState(ball, Tuple.of(player1, player2), startTime).start(startTime, rnd));
+            return Option.some(new GameState(ball, Players.of(player1, player2), startTime).start(startTime, rnd));
         } else {
             return Option.none();
         }
@@ -68,11 +65,11 @@ public class GameState implements Serializable {
         if ( this.phase == GamePhase.STARTED) {
             long diff = newTime - this.updateTime;
             float scale = diff / GameParams.RELATIVE_SPEED;
-            final Tuple2<Ball, Tuple2<Player,Player>> newPositions = this.ball
+            final Tuple2<Ball, Players> newPositions = this.ball
                     .move(scale)
                     .bounce(this.players,rnd );
             final Function<Player, Player> movePaddle = player -> player.movePaddle(diff);
-            final Tuple2<Player, Player> newPlayers = newPositions._2.map(movePaddle, movePaddle);
+            final Players newPlayers = newPositions._2.map(movePaddle);
 
             return new GameState(newPositions._1, newPlayers, newTime);
         } else {
@@ -84,7 +81,7 @@ public class GameState implements Serializable {
 
     public GameState playerMovingTo(String userId, float targetY) {
         final Function<Player, Player> movePaddle = player -> player.makeMoving(userId, targetY);
-        final Tuple2<Player, Player> newPlayers = this.players.map(movePaddle, movePaddle);
+        final Players newPlayers = this.players.map(movePaddle);
         return new GameState(this.ball, newPlayers, this.updateTime);
     }
 

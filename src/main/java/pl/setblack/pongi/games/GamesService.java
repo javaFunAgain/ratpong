@@ -148,11 +148,11 @@ public class GamesService {
 
     private void endGame(String gameUUID, GameState gs) {
         if (this.gamesFlow.remove(gameUUID) != null) {
-            final ScoreRecord player1 =
-                    createScore(gs.players._1, gs.players._2, gameUUID);
-            final ScoreRecord player2 =
-                    createScore(gs.players._2, gs.players._1, gameUUID);
-            this.scoresRepo.registerScore(List.of(player1, player2));
+            final ScoreRecord player1Score =
+                    createScore(gs.players.player1, gs.players.player2, gameUUID);
+            final ScoreRecord player2Score =
+                    createScore(gs.players.player2, gs.players.player1, gameUUID);
+            this.scoresRepo.registerScore(List.of(player1Score, player2Score));
             this.gamesRepo.removeGame(gameUUID);
         }
     }

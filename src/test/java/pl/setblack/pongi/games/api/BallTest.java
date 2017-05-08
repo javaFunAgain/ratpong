@@ -31,8 +31,8 @@ class BallTest {
     }
 
 
-    private Tuple2<Player, Player> createPlayers() {
-        return Tuple.of(
+    private Players createPlayers() {
+        return Players.of(
                 new Player(0, "player1", Paddle.createPaddleForPlayer(1)),
                 new Player(0, "player2", Paddle.createPaddleForPlayer(2))
         );
