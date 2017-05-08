@@ -3,17 +3,11 @@ package pl.setblack.pongi.scores.repo;
 import javaslang.collection.List;
 import javaslang.control.Option;
 import pl.setblack.airomem.core.Persistent;
-import pl.setblack.airomem.core.VoidCommand;
 import pl.setblack.pongi.scores.ScoreRecord;
 import pl.setblack.pongi.scores.UserScore;
-import pl.setblack.pongi.users.repo.UsersRepositoryInMemory;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-/**
- * Created by jarek on 2/11/17.
- */
 public class ScoreRepositoryES implements ScoresRepository {
 
     private final Persistent<ScoresRepositoryInMem> perstenceController;

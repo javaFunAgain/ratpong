@@ -4,11 +4,7 @@ import pl.setblack.airomem.core.Persistent;
 import pl.setblack.pongi.users.api.RegUserStatus;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-/**
- * Created by jarek on 2/4/17.
- */
 public class UsersRepoES implements UsersRepository {
 
 
