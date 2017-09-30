@@ -7,12 +7,14 @@ import javaslang.collection.LinearSeq;
 import javaslang.collection.List;
 
 import javax.annotation.concurrent.Immutable;
+import java.io.Serializable;
 import java.util.function.Function;
 
 
 @Immutable
 @JsonDeserialize
-public class Players {
+public class Players implements Serializable{
+    private static final long serialVersionUID = 1l;
     public final Player player1;
     public final Player player2;
 

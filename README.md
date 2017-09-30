@@ -6,6 +6,10 @@ This is POUNK game server implementation which is  network version of a classic 
 
 For client code go to : https://github.com/jarekratajski/scalajspounk
 
+# java 9
+In order to run this code in Java 9 please add  this switch to jvm.
+--add-modules java.activation
+
 # Running?
 Just call ```gradle run ```
 Navigate to http://localhost:9000
